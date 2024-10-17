@@ -1,25 +1,71 @@
 @import '@nativescript/theme/core';
 @import '@nativescript/theme/default';
 
-// Place any CSS rules you want to apply on both iOS and Android here.
-// This is where the vast majority of your CSS code goes.
 
-// Font icon class
-.fab {
-  font-family: 'Font Awesome 5 Brands', 'fa-brands-400';
-  font-weight: 400;
+/* Styles */
+.login-container {
+  padding: 20px;
+  text-align: center;
 }
 
-.fas {
-  font-family: 'Font Awesome 5 Free', 'fa-solid-900';
-  font-weight: 900;
+.logo {
+  margin-top: 40px;
+  height: 400px;
+  width: 400px;
+  align-self: center;
+  margin-bottom: 40px;
 }
 
-.far {
-  font-family: 'Font Awesome 5 Free', 'fa-regular-400';
-  font-weight: 400;
+.login-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1f1f44; /* Couleur foncée */
+  margin-top: 20px;
 }
-.colorGreen {
-    color: #00ff00;
-    font-weigth: 200;
+
+.subtitle {
+  font-size: 14px;
+  color: #808080; /* Gris */
+  margin-bottom: 10px;
 }
+.input-field {
+  margin-top: 20px;
+  padding: 15px; /* Ajout de padding pour l'espace intérieur */
+  background-color: #f8f8f8; /* Fond clair */
+  font-size: 14px; /* Ajuster la taille de la police */
+  border-color :#808080;
+  text-align: left;
+
+}
+
+
+.forgot-password {
+  font-size: 12px;
+  color: #808080; /* Gris */
+  text-align: right;
+  margin-top: 5px;
+}
+
+.login-button {
+  background-color: #1f1f44; /* Bleu foncé */
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.register-text {
+  font-size: 14px;
+  color: #808080; /* Gris */
+  margin-top: 20px;
+}
+
+.register-link {
+  font-size: 14px;
+  color: #1f1f44; /* Bleu foncé */
+  font-weight: bold;
+  margin-top: 5px;
+}
+
