@@ -1,3 +1,11 @@
+// Variables de couleurs
+$primary-color: #20224a;
+$light-color: #fff;
+$bleu-color: rgba(28, 29, 83, 1);
+
+$input-bg: #f7f7f7;
+$input-border: #eaeaea;
+
 .container {
     padding: 20px;
     border-radius: 8px;
@@ -90,6 +98,84 @@
     font-weight: bold;
     cursor: pointer;
 }
+// css profil
+
+.action-bar {
+  background-color: rgba(28, 29, 83, 1);
+  color: white; /* Le texte sera blanc pour le contraste */
+}
+.page {
+  background-color: transparent;
+  height: 100%;
+  width: 100%;
+}
+
+.background-image {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: -1; /* L'image de fond reste derrière le contenu */
+}
+
+.profile-content {
+  height: 100%;
+  z-index: 1;
+  padding: 20px;
+}
+
+
+.user-name-overlay {
+  font-size: 18px;
+  margin-top:60px;
+  font-weight: bold;
+  color: $light-color; /* Blanc pour se démarquer du fond */
+  text-align: center;
+}
+
+.profile-page {
+  height: 100%;
+}
+
+
+.form {
+  margin-top: 600px;
+  height: 100%;
+
+  .form-group {
+    margin-bottom: 15px;
+
+    .label {
+      font-size: 14px;
+      color: darken($input-border, 20%);
+      margin-bottom: 50px;
+    }
+
+    .input {
+      background-color: $input-bg;
+      border-radius: 10px;
+      padding: 10px;
+      border: 1px solid $input-border;
+      font-size: 16px;
+    }
+
+    .textarea {
+      height: 80px;
+    }
+  }
+
+  .save-button {
+    background-color: $bleu-color;
+    //color: $light-color;
+    padding: 15px;
+    border-radius: 25px;
+    width: 50%;
+    font-size: 16px;
+    text-align: center;
+  }
+}
+
+//
+
 
 
 .forgot-password {
@@ -114,6 +200,16 @@
   color: #808080; /* Gris */
   margin-top: 20px;
 }
+  .save-button {
+    background-color: $primary-color;
+    color: $light-color;
+    padding: 15px;
+    border-radius: 25px;
+    width: 100%;
+    font-size: 16px;
+    text-align: center;
+  }
+
 
 .register-link {
   font-size: 14px;
