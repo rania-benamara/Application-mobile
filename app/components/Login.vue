@@ -28,7 +28,7 @@
 export default {
   data() {
     return {
-      email: '',
+
       mot_de_passe: '',
     };
   },
