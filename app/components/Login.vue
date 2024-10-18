@@ -19,13 +19,14 @@
 
       <!-- Lien pour créer un compte -->
       <Label text="Vous n'avez pas de compte ?" class="register-text" />
-      <Label text="Inscrivez-vous maintenant" class="register-link" />
+      <Label text="Inscrivez-vous maintenant" class="register-link" @tap="registerlink"   />
     </StackLayout>
   </Page>
 </template>
 
 <script>
 import Accueil from './Accueil'
+import Register from './Register'
 
 export default {
   data() {
@@ -37,6 +38,9 @@ export default {
   methods: {
       goToaccueil() {
             this.$navigateTo(Accueil);
+      },
+      registerlink() {
+        this.$navigateTo(Register);
       },
   },
 };
@@ -65,36 +69,43 @@ export default {
 }
 
 .subtitle {
-  font-size: 14px;
-  color: #808080; /* Gris */
-  margin-bottom: 10px;
+  font-size: 15px;
+  color: #1f1f44; /* Gris */
+
 }
 .input-field {
-  margin-top: 20px;
+  margin-top: 80px;
   padding: 15px; /* Ajout de padding pour l'espace intérieur */
-  background-color: #f8f8f8; /* Fond clair */
   font-size: 14px; /* Ajuster la taille de la police */
-  border-color :#808080;
+border-color :#808080;
   text-align: left;
-
+  border-radius:20px;
+  border: 3px solid black; /* Spécifiez l'épaisseur, le style et la couleur de la bordure */
+  width:350;
+  height:50;
 }
 
 
 .forgot-password {
-  font-size: 12px;
-  color: #808080; /* Gris */
+  font-size: 14px;
+ color: #1f1f44;  /* Gris */
   text-align: right;
   margin-top: 5px;
 }
 
 .login-button {
+  text-transform: none; /* Désactive la mise en majuscules */
+
   background-color: #1f1f44; /* Bleu foncé */
   color: white;
   font-size: 18px;
   font-weight: bold;
   margin-top: 20px;
   padding: 15px;
-  border-radius: 5px;
+  border-radius: 20px;
+  margin-bottom:300px;
+  width:350;
+    height:50;
 }
 
 .register-text {

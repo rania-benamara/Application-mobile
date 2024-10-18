@@ -1,106 +1,223 @@
 <template>
   <Page>
-    <!-- Promotional Banner -->
-    <StackLayout class="banner">
-      <Image src="~/images/banner.jpg" stretch="aspectFill" />
-      <Button text="Voir les offres" class="btn" />
-    </StackLayout>
+    <StackLayout>
 
-    <!-- Categories Grid -->
-    <StackLayout class="categories">
-      <Label text="Catégorie" class="title" />
-      <GridLayout columns="*, *, *" rows="auto, auto, auto">
-        <StackLayout v-for="category in categories" :key="category.name" colSpan="1" rowSpan="1" class="category">
-          <Image :src="category.icon" stretch="aspectFit" />
-          <Label :text="category.name" />
+      <!-- Offres Spéciales Section -->
+      <GridLayout columns="*, auto" class="offer-grid">
+        <StackLayout class="offer-details" col="0">
+          <Label text="Offres Spéciales" class="offer-title" />
+          <Label text="Obtenez une Offre Spéciale" class="offer-subtitle" />
+          <Label text="Jusqu'à 40 %" class="offer-discount" />
+          <Button text="voir les offres" class="offer-button" />
+        </StackLayout>
+        <StackLayout class="image-container" col="1">
+            <Image src="~/images/1.png" class="offer-image"  />
         </StackLayout>
       </GridLayout>
-    </StackLayout>
 
-    <!-- Bottom Navigation Bar -->
-    <GridLayout rows="auto" columns="*, *, *, *, *" class="bottom-nav">
-      <StackLayout v-for="item in navItems" :key="item.name" colSpan="1" class="nav-item">
-        <Image :src="item.icon" stretch="aspectFit" />
-        <Label :text="item.name" />
-      </StackLayout>
-    </GridLayout>
+
+      <!-- Catégories Section -->
+       <Label text="Catégories" class="category-title" />
+
+       <!-- Première Grille : 1ère Ligne avec 4 Colonnes -->
+       <GridLayout columns="*,*,*,*" rows="auto" class="offer-grid2">
+         <StackLayout class="categorie1" row="0" col="0">
+           <Image src="~/images/1.png" class="offer-image2" />
+           <Label text="Cookies" class="category-label" />
+         </StackLayout>
+
+         <StackLayout class="categorie2" row="0" col="1">
+           <Image src="~/images/2.png" class="offer-image2" />
+           <Label text="Gâteaux personnalisés" class="category-label" />
+         </StackLayout>
+
+         <StackLayout class="categorie3" row="0" col="2">
+           <Image src="~/images/3.png" class="offer-image2" />
+           <Label text="Produits sans gluten" class="category-label" />
+         </StackLayout>
+
+         <StackLayout class="categorie4" row="0" col="3">
+           <Image src="~/images/4.png" class="offer-image2" />
+           <Label text=" Sans produits laitiers" class="category-label" />
+         </StackLayout>
+       </GridLayout>
+
+       <!-- Deuxième Grille : Reste des éléments avec 4 Colonnes -->
+       <GridLayout columns="*,*,*,*" rows="auto" class="offer-grid2">
+         <StackLayout class="categorie5" row="0" col="0">
+           <Image src="~/images/5.png" class="offer-image2" />
+           <Label text="Salés" class="category-label" />
+         </StackLayout>
+
+         <StackLayout class="categorie6" row="0" col="1">
+           <Image src="~/images/6.png" class="offer-image2" />
+           <Label text="Pain" class="category-label" />
+         </StackLayout>
+
+         <StackLayout class="categorie7" row="0" col="2">
+           <Image src="~/images/7.png" class="offer-image2" />
+           <Label text="Jus" class="category-label" />
+         </StackLayout>
+
+         <StackLayout class="categorie8" row="0" col="3">
+           <Image src="~/images/8.png" class="offer-image2" />
+           <Label text="Russes" class="category-label" />
+         </StackLayout>
+       </GridLayout>
+
+          <button text="Tous les Produits" class="all-products-button"/>
+
+    </StackLayout>
   </Page>
 </template>
 
 <script>
 export default {
   data() {
-    return {
-      categories: [
-        { name: 'Fruits', icon: '~/images/fruits-icon.png' },
-        { name: 'Légumes', icon: '~/images/vegetables-icon.png' },
-        { name: 'Pain', icon: '~/images/bread-icon.png' },
-        { name: 'Poissons', icon: '~/images/seafood-icon.png' },
-        // Ajoutez les autres catégories ici
-      ],
-      navItems: [
-        { name: 'Accueil', icon: '~/images/home-icon.png' },
-        { name: 'Recherche', icon: '~/images/search-icon.png' },
-        { name: 'Panier', icon: '~/images/cart-icon.png' },
-        { name: 'Promotions', icon: '~/images/promotions-icon.png' },
-        { name: 'Profil', icon: '~/images/profile-icon.png' },
-      ],
-    };
-  },
+    return {};
+  }
 };
 </script>
 
 <style scoped>
-.banner {
-  width: 100%;
-  text-align: center;
-  margin-bottom: 20px;
+.offer-grid {
+  margin: 20px;
+  height: 600px;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
 }
 
-.banner img {
-  width: 100%;
-  height: auto;
+.offer-details {
+  padding: 20px;
+  background-color:  #1C1D534D;
+  height:600px;
+  border-radius: 10px;
+}
+.offer-title {
+  width:130;
+  height:40;
+  padding:10px;
+  font-size: 15px;
+  border-radius:20;
+  background-color: white;
+  font-color:black;
+  color:black;
+  margin-bottom:40px;
+  margin-top:40px;
+  horizontal-align:left;
+}
+.image-container{
+    background-color: #1C1D534D ;
 }
 
-.banner button {
+.offer-subtitle,
+.offer-discount {
+  margin-top:200px;
+  margin-bottom:20px;
+  font-size: 16px;
   margin-top: 10px;
-  padding: 10px 20px;
-  background-color: #ff6347;
+  margin-left: 40px;
+  color:black;
+}
+
+.offer-button {
+  text-transform: none; /* Désactive la mise en majuscules */
+
+ width:130;
+  height:40;
+  padding:10px;
+  font-size: 15px;
+  border-radius:20;
+  background-color: white;
+  font-color:black;
+  color:white;
+  align-item:left;
+  margin-top:40px;
+  background-color: #1C1D53;
+}
+.offer-image {
+  width: 420px;
+  height: 600px;
+  border-top-left-radius: 200px;
+  border-bottom-left-radius: 200px;
+  object-fit: cover;
+  background-color: #ddd;
+}
+
+.category-section {
+  margin: 20px;
+}
+
+.category-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #1C1D53;
+font-family: Poppins;
+font-size: 36px;
+font-weight: 600;
+line-height: 46.8px;
+letter-spacing: -0.01em;
+text-align: left;
+margin-left:20px;
+
+}
+
+.category-label {
+  font-size: 14px;
+  text-align: center;
+  margin: 5px 0;
+}
+
+.all-products-button {
+  text-transform: none; /* Désactive la mise en majuscules */
+margin-top:40;
+  background-color: #3f51b5;
   color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.categories {
-  width: 100%;
   text-align: center;
+  width:150;
+    height:40;
+    padding:10px;
+    font-size: 15px;
+    border-radius:20;
 }
 
-.grid {
+
+
+.offer-grid2 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Crée 4 colonnes égales */
+  gap: 20px; /* Espace entre les colonnes */
+  margin: 20px 0; /* Marge extérieure */
+}
+
+.categorie1, .categorie2, .categorie3, .categorie4,
+.categorie5, .categorie6, .categorie7, .categorie8 {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
+  flex-direction: column;
+  align-items: center; /* Aligne le contenu au centre horizontalement */
+  justify-content: center; /* Aligne le contenu verticalement */
 }
 
-.category {
-  width: 45%;
-  margin: 10px 0;
-  text-align: center;
+.offer-image2 {
+  width: 150px;
+  height: 150px;
+  object-fit: cover; /* S'assure que l'image garde ses proportions */
+  border-radius: 10px;
+  margin-bottom: 10px; /* Espace entre l'image et le texte */
 }
 
-.category img {
-  width: 50px;
-  height: 50px;
+.category-label {
+  font-size: 14px;
+  text-align: center; /* Centre le texte */
+  color: #333;
+  word-wrap: break-word; /* Permet au texte de se casser sur plusieurs lignes si nécessaire */
+    white-space: normal; /* Permet au texte de s'enrouler */
+    width: 100%; /* Prend la largeur complète de la cellule */
+
 }
 
-.bottom-nav {
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
-  position: fixed;
-  bottom: 0;
-  background-color: #f8f8f8;
-  padding: 10px 0;
-}
+
+
 </style>
