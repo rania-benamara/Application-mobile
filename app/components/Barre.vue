@@ -1,7 +1,7 @@
 <template lang="html">
     <TabView androidTabsPosition="bottom">
         <!-- Page d'accueil -->
-        <TabViewItem title="Accueil" iconSource="~/images/accueil.png">
+        <TabViewItem title="Accueil" iconSource="~/images/acceuil.png">
             <Frame id="items">
                 <Acceuil/>
             </Frame>
