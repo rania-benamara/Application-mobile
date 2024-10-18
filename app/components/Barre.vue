@@ -38,7 +38,7 @@
 </template>
 
 <script>
-  import Favoris from './Favoris';
+  import Favoris from './Favoris';//les pages a changer
   import Acceuil from './Acceuil';
   import Menu from './Menu';
   import Panier from './Panier';
