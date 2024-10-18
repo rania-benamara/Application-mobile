@@ -8,7 +8,8 @@ import ForgotPassword from  './components/ForgotPassword'
 import ResetPassword from  './components/ResetPassword'
 import AllProducts from  './components/AllProducts'
 import MesCommandes from  './components/MesCommandes'
+import NousContacter from './components/NousContacter'
 
 new Vue({
-  render: (h) => h('frame', [h(MesCommandes)]),
+  render: (h) => h('frame', [h(NousContacter)]),
 }).$start()
