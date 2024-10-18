@@ -5,7 +5,7 @@
       <NavigationButton icon="~/images/back_icone.png" @tap="goBack" ios.position="left" />
     </ActionBar>
 
-    <!--hhhhhh Contenu de la page -->
+    <!--hhhhtthh Contenu de la page -->
     <GridLayout rows="auto, *" columns="*">
       <!-- Image de fond qui occupe tout l'écran -->
       <Image src="~/images/fondProfil.png" stretch="aspectFill" class="background-image" rowSpan="2" />
