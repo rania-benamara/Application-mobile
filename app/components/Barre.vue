@@ -8,28 +8,28 @@
         </TabViewItem>
 
         <!-- Page de recherche -->
-        <TabViewItem title="Explorer" iconSource="~/images/chercher.png">
+        <TabViewItem title="Explorer" iconSource="~/images/cherche.png">
             <Frame id="search">
                 <Search/>
             </Frame>
         </TabViewItem>
 
         <!-- Page panier -->
-        <TabViewItem title="Panier" iconSource="~/images/panier.png">
+        <TabViewItem title="Panier" iconSource="~/images/panie.png">
             <Frame id="panier">
                 <Panier/>
             </Frame>
         </TabViewItem>
 
         <!-- Page favoris -->
-        <TabViewItem title="Favoris" iconSource="~/images/favoris.png">
+        <TabViewItem title="Favoris" iconSource="~/images/favori.png">
             <Frame id="favoris">
                 <Favoris/>
             </Frame>
         </TabViewItem>
 
         <!-- Page menu -->
-        <TabViewItem title="Menu" iconSource="~/images/menu.png">
+        <TabViewItem title="Menu" iconSource="~/images/menue.png">
             <Frame id="menu">
                 <Menu/>
             </Frame>
