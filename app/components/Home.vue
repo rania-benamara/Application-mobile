@@ -1,4 +1,4 @@
-<template>
+ <template>
     <Page>
         <ActionBar>
             <Label text="Home"/>
