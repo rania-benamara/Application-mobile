@@ -6,8 +6,12 @@
       <GridLayout columns="*, auto" class="offer-grid">
         <StackLayout class="offer-details" col="0">
           <Label text="Offres Spéciales" class="offer-title" />
-          <Label text="Obtenez une Offre Spéciale" class="offer-subtitle" />
-          <Label text="Jusqu'à 40 %" class="offer-discount" />
+          <Label class="offer-subtitle">
+              <FormattedString>
+                <Span text="Obtenez une Offre Spéciale Jusqu'à " />
+                <Span text="40%" fontWeight="bold" fontSize="30" />
+              </FormattedString>
+            </Label>
           <Button text="voir les offres" class="offer-button" />
         </StackLayout>
         <StackLayout class="image-container" col="1">
@@ -96,7 +100,7 @@ export default {
 }
 .offer-title {
   width:130;
-  height:40;
+  height:35;
   padding:10px;
   font-size: 15px;
   border-radius:20;
@@ -111,15 +115,19 @@ export default {
     background-color: #1C1D534D ;
 }
 
-.offer-subtitle,
-.offer-discount {
-  margin-top:200px;
-  margin-bottom:20px;
-  font-size: 16px;
-  margin-top: 10px;
-  margin-left: 40px;
-  color:black;
-}
+    .offer-subtitle,
+    .offer-discount {
+      margin-top:200px;
+      margin-bottom:20px;
+      font-size: 16px;
+      margin-top: 10px;
+      margin-left: 40px;
+      color:black;
+       word-wrap: break-word; /* Permet au texte de se casser sur plusieurs lignes si nécessaire */
+          white-space: normal; /* Permet au texte de s'enrouler */
+          width: 100%; /* Prend la largeur complète de la cellule */
+
+    }
 
 .offer-button {
   text-transform: none; /* Désactive la mise en majuscules */
@@ -132,9 +140,10 @@ export default {
   background-color: white;
   font-color:black;
   color:white;
-  align-item:left;
-  margin-top:40px;
+  margin-top:10px;
   background-color: #1C1D53;
+  horizontal-align:left;
+  margin-left: 66px;
 }
 .offer-image {
   width: 420px;
@@ -198,14 +207,17 @@ margin-top:40;
   flex-direction: column;
   align-items: center; /* Aligne le contenu au centre horizontalement */
   justify-content: center; /* Aligne le contenu verticalement */
+    border: 3px solid black !important; /* Forcer la bordure */
+
 }
 
 .offer-image2 {
   width: 150px;
   height: 150px;
-  object-fit: cover; /* S'assure que l'image garde ses proportions */
-  border-radius: 10px;
-  margin-bottom: 10px; /* Espace entre l'image et le texte */
+  object-fit: cover;
+  border-radius: 40px;
+  margin-bottom: 10px;
+  border: 3px solid black !important; /* Forcer la bordure */
 }
 
 .category-label {
