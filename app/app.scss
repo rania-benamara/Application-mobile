@@ -116,9 +116,53 @@
 }
 .register-link {
   font-size: 14px;
-  color: #1f1f44; /* Bleu foncé */
+  color: #1f1f44;
   font-weight: bold;
   margin-top: 5px;
 }
 
+//barre pour la page rechercher
+.search-bar {
+    margin: 10;
+    border-radius: 28;
+    height: 40;
+    width: 250;
+}
+//button pour page rechercher
+.search-button {
+    background-color: #3B5DBA;
+    color: #ffffff;
+    border-radius: 28;
+    height: 40;
+    margin-top: 10;
+    width: 125;
+}
+//codde pour la barre des items
+.custom-tabview {
+    background-color: #ffffff;
+    border-top-width: 1;
+    border-top-color: #cccccc;
+    height: 60;
+}
+.small-title .tab-title {
+    font-size: 5px; /* Ajustez la taille selon vos besoins */
+    margin: 0; /* Réduisez les marges pour plus d'espace */
+    width:60px;
+}
 
+.custom-tabview .tab-view-item {
+    flex: 1;
+    text-align: center;
+    width:60;
+
+}
+TabViewItem {
+    width: 120;
+    text-align: center;
+}
+
+.custom-tabview .tab-view-item .tab-view-item-icon {
+    width: 24;
+    height: 24;
+    margin-bottom: 5;
+}
