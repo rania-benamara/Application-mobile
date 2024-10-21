@@ -5,6 +5,8 @@ $bleu-color: rgba(28, 29, 83, 1);
 
 $input-bg: #f7f7f7;
 $input-border: #eaeaea;
+$red-color: #ff0000;
+$gray-color: #999;
 
 .container {
     padding: 20px;
@@ -174,7 +176,85 @@ $input-border: #eaeaea;
   }
 }
 
-//
+//////fin css profil
+ /////css offres
+
+/* Couleur bleu foncé */
+$blue-fonce: #1A237E;
+$light-color: #fff;
+$red-color: #ff0000;
+$gray-color: #999;
+
+// Styles de l'ActionBar
+.action-bar {
+  background-color: $blue-fonce;
+  color: $light-color;
+}
+
+.page {
+  background-color: $light-color;
+  height: 100%;
+  width: 100%;
+}
+
+.offers-content {
+  padding: 20px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: $blue-fonce;
+  margin-bottom: 20px;
+}
+
+.product-list {
+  margin-top: 10px;
+}
+
+.product-item {
+  margin-bottom: 20px;
+}
+
+.product-image {
+  width: 150px;
+  height: 150px;
+  border-radius: 10px;
+  margin-right: 18px;
+}
+
+.product-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: $blue-fonce;
+}
+
+.product-category {
+  font-size: 14px;
+  color: $gray-color;
+  margin-top: 4px;
+}
+
+.product-pricing {
+  margin-top: 5px;
+  justify-content: space-between;
+}
+
+.original-price {
+  font-size: 16px;
+  text-decoration: line-through;
+  color: $red-color;
+  margin-right: 10px;
+}
+
+.current-price {
+  font-size: 16px;
+  font-weight: bold;
+  color: $blue-fonce;
+}
+
+ ///fin offres
+
 
 
 
