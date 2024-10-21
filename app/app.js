@@ -1,6 +1,5 @@
 
 import Vue from 'nativescript-vue';
-
 import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
@@ -19,7 +18,9 @@ import LogoBarre from './components/LogoBarre'
 import Search from './components/Search'
 import Livraison from './components/Livraison'
 import AddLivraison from './components/AddLivraison'
-
+import AfficherDetails from './components/AfficherDetails'
 new Vue({
-  render: (h) => h(AddLivraison),
-}).$start()
+  render: (h) => h(AfficherDetails),
+  }).$start()
+
+
