@@ -28,7 +28,25 @@
       <Button text="Créer" class="create-button" @tap="" />
 
       <Label class="footer" text="Vous avez déjà un compte ? " />
-      <Label text="Connexion" class="footer-link" @tap="" />
+      <Label text="Connexion" class="footer-link" @tap="loginlink" />
     </StackLayout>
   </Page>
 </template>
+
+<script>
+import Login from './Login'
+export default {
+  data() {
+    return {
+
+      mot_de_passe: '',
+    };
+  },
+  methods: {
+
+      loginlink() {
+        this.$navigateTo(Login);
+      },
+  },
+};
+</script>

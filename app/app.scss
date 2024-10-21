@@ -1,3 +1,13 @@
+// Variables de couleurs
+$primary-color: #20224a;
+$light-color: #fff;
+$bleu-color: rgba(28, 29, 83, 1);
+
+$input-bg: #f7f7f7;
+$input-border: #eaeaea;
+$red-color: #ff0000;
+$gray-color: #999;
+
 .container {
     padding: 20px;
     border-radius: 8px;
@@ -121,6 +131,162 @@ TextField {
     font-weight: bold;
     cursor: pointer;
 }
+// css profillllll
+
+.action-bar {
+  background-color: rgba(28, 29, 83, 1);
+  color: #ffffff; /* Le texte sera blanc pour le contraste */
+}
+.page {
+  background-color: transparent;
+  height: 100%;
+  width: 100%;
+}
+
+.background-image {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: -1; /* L'image de fond reste derrière le contenu */
+}
+
+.profile-content {
+  height: 100%;
+  z-index: 1;
+  padding: 20px;
+}
+
+
+.user-name-overlay {
+  font-size: 18px;
+  margin-top:60px;
+  font-weight: bold;
+  color: $light-color; /* Blanc pour se démarquer du fond */
+  text-align: center;
+}
+
+.profile-page {
+  height: 100%;
+}
+
+
+.form {
+  margin-top: 600px;
+  height: 100%;
+
+  .form-group {
+    margin-bottom: 15px;
+
+    .label {
+      font-size: 14px;
+      color: darken($input-border, 20%);
+      margin-bottom: 50px;
+    }
+
+    .input {
+      background-color: $input-bg;
+      border-radius: 10px;
+      padding: 10px;
+      border: 1px solid $input-border;
+      font-size: 16px;
+    }
+
+    .textarea {
+      height: 80px;
+    }
+  }
+
+  .save-button {
+    background-color: $bleu-color;
+    //color: $light-color;
+    padding: 15px;
+    border-radius: 25px;
+    width: 50%;
+    font-size: 16px;
+    text-align: center;
+  }
+}
+
+//////fin css profil
+ /////css offres
+
+/* Couleur bleu foncé */
+$blue-fonce: #1A237E;
+$light-color: #fff;
+$red-color: #ff0000;
+$gray-color: #999;
+
+// Styles de l'ActionBar
+.action-bar {
+  background-color: $blue-fonce;
+  color: $light-color;
+}
+
+.page {
+  background-color: $light-color;
+  height: 100%;
+  width: 100%;
+}
+
+.offers-content {
+  padding: 20px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: $blue-fonce;
+  margin-bottom: 20px;
+}
+
+.product-list {
+  margin-top: 10px;
+}
+
+.product-item {
+  margin-bottom: 20px;
+}
+
+.product-image {
+  width: 150px;
+  height: 150px;
+  border-radius: 10px;
+  margin-right: 18px;
+}
+
+.product-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: $blue-fonce;
+}
+
+.product-category {
+  font-size: 14px;
+  color: $gray-color;
+  margin-top: 4px;
+}
+
+.product-pricing {
+  margin-top: 5px;
+  justify-content: space-between;
+}
+
+.original-price {
+  font-size: 16px;
+  text-decoration: line-through;
+  color: $red-color;
+  margin-right: 10px;
+}
+
+.current-price {
+  font-size: 16px;
+  font-weight: bold;
+  color: $blue-fonce;
+}
+
+ ///fin offres
+
+
 
 
 .forgot-password {
@@ -132,7 +298,7 @@ TextField {
 
 .login-button {
   background-color: #1f1f44; /* Bleu foncé */
-  color: white;
+  color:#ffffff;
   font-size: 18px;
   font-weight: bold;
   margin-top: 20px;
@@ -145,6 +311,19 @@ TextField {
   color: #808080; /* Gris */
   margin-top: 20px;
 }
+// scrum38
+
+  .save-button {
+    background-color: $primary-color;
+    color: $light-color;
+    padding: 15px;
+    border-radius: 25px;
+    width: 100%;
+    font-size: 16px;
+    text-align: center;
+  }
+
+
 .register-link {
   font-size: 14px;
   color: #1f1f44;

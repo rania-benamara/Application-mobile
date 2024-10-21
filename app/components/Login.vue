@@ -15,16 +15,19 @@
       <Label text="Mot de passe oublié ?" class="forgot-password" />
 
       <!-- Bouton Se connecter -->
-      <Button text="Se connecter" class="login-button" />
+      <Button text="Se connecter" class="login-button" @tap="goToaccueil" />
 
       <!-- Lien pour créer un compte -->
       <Label text="Vous n'avez pas de compte ?" class="register-text" />
-      <Label text="Inscrivez-vous maintenant" class="register-link" />
+      <Label text="Inscrivez-vous maintenant" class="register-link" @tap="registerlink"   />
     </StackLayout>
   </Page>
 </template>
 
 <script>
+import Accueil from './Accueil'
+import Register from './Register'
+
 export default {
   data() {
     return {
@@ -32,5 +35,91 @@ export default {
       mot_de_passe: '',
     };
   },
+  methods: {
+      goToaccueil() {
+            this.$navigateTo(Accueil);
+      },
+      registerlink() {
+        this.$navigateTo(Register);
+      },
+  },
 };
 </script>
+<style scoped>
+
+/* Styles */
+.login-container {
+  padding: 20px;
+  text-align: center;
+}
+
+.logo {
+  margin-top: 40px;
+  height: 400px;
+  width: 400px;
+  align-self: center;
+  margin-bottom: 40px;
+}
+
+.login-title {
+  font-size: 23px;
+  font-weight: bold;
+  color: #1f1f44; /* Couleur foncée */
+  margin-top: 20px;
+}
+
+.subtitle {
+  font-size: 15px;
+  color: #1f1f44; /* Gris */
+
+}
+.input-field {
+  margin-top: 80px;
+  padding: 15px; /* Ajout de padding pour l'espace intérieur */
+  font-size: 14px; /* Ajuster la taille de la police */
+border-color :#808080;
+  text-align: left;
+  border-radius:20px;
+  border: 3px solid black; /* Spécifiez l'épaisseur, le style et la couleur de la bordure */
+  width:350;
+  height:50;
+}
+
+
+.forgot-password {
+  font-size: 14px;
+ color: #1f1f44;  /* Gris */
+  text-align: right;
+  margin-top: 5px;
+}
+
+.login-button {
+  text-transform: none; /* Désactive la mise en majuscules */
+
+  background-color: #1f1f44; /* Bleu foncé */
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 20px;
+  margin-bottom:300px;
+  width:350;
+    height:50;
+}
+
+.register-text {
+  font-size: 14px;
+  color: #808080; /* Gris */
+  margin-top: 20px;
+}
+
+.register-link {
+  font-size: 14px;
+  color: #1f1f44; /* Bleu foncé */
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+
+</style>
