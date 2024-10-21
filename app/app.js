@@ -3,6 +3,8 @@ import Vue from 'nativescript-vue';
 import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
+import Profile from './components/Profile';
+import Offres from './components/Offres';
 import SaleCategorie from './components/SaleCategorie';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
@@ -14,5 +16,8 @@ import SupprimerProfile from './components/SupprimerProfile';
 import Panier from './components/Panier';
 
 new Vue({
-  render: (h) => h('frame', [h(NousContacter)]), // or h(Panier) or both
+  render: (h) => h('frame', [
+    h(NousContacter),
+    h(Panier)
+  ]),
 }).$start();
