@@ -1,23 +1,43 @@
+// Variables de couleurs
+$primary-color: #20224a;
+$light-color: #fff;
+$bleu-color: rgba(28, 29, 83, 1);
+
+$input-bg: #f7f7f7;
+$input-border: #eaeaea;
+$red-color: #ff0000;
+$gray-color: #999;
+
 .container {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     background-color: #ffffff;
-    text-align: center;
+    text-align:center;
     font-family: 'Arial', sans-serif;
 }
 
 .title {
-    font-size: 28px;
-    color: #333388;
-    font-weight: bold;
-    margin-bottom: 50px;
+    font-family: Outfit;
+    font-size: 35px;
+    font-weight: 700;
+    line-height: 44.1px;
+    text-align: left;
+    color:#1C1D53;
+    margin-top:68px;
+    margin-left:40px;
 }
 
 .description {
-    font-size: 12px;
-    color: #333388;
-    margin-bottom: 250px;
+    font-family: Outfit;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 25.2px;
+    text-align: left;
+    margin-bottom:122px;
+    margin-left:40px;
+    color:#1C1D53;
+
 }
 
 
@@ -35,13 +55,28 @@
   margin-bottom: 40px;
 }
 .text-field-container {
-    background-color: #fafafa;
-    padding: 10px;
     margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-}
+    border-width: 1px;
+    border-color: #8E8383;
+    border-radius: 5px;
+    border: 0.6px solid #8E8383;
+    padding: 10px;
+    background-color: #f9f9f9;
+    text-align:left;
+    font-family: Outfit;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 20.16px;
+    width:342;
+    margin-bottom:30px;
 
+}
+TextField {
+    border-width: 0;
+    border-bottom-width: 0; /* Pour Android */
+    background-color: transparent;
+    box-shadow: none; /* Supprimer tout effet d'ombre */
+}
 .login-title {
   font-size: 23px;
   font-weight: bold;
@@ -50,15 +85,20 @@
 }
 
 .create-button {
-    width: 100%;
+    width: 250;
     padding: 10px;
-    background-color: #1a1a6a;
     color: #ffffff;
-    border-radius: 8px;
+    background-color: #1C1D53;
     font-size: 16px;
     font-weight: bold;
-    margin-top: 10px;
+    margin-top:61;
+    height:60;
+    font-family: Outfit;
 }
+.create-button-container{
+    border: 0.6px solid #8E8383;
+    border-radius: 5px 0px 0px 0px;
+    }
 
 .subtitle {
   font-size: 14px;
@@ -73,8 +113,9 @@
   border-color :#808080;
   text-align: left;
 
+
 }
-.create-button:hover {
+.create-button :hover {
     background-color: #333388;
 }
 
@@ -86,10 +127,166 @@
 
 
 .footer-link {
-    color: #1a1a1a;
+    color: #1C1D53;
     font-weight: bold;
     cursor: pointer;
 }
+// css profillllll
+
+.action-bar {
+  background-color: rgba(28, 29, 83, 1);
+  color: #ffffff; /* Le texte sera blanc pour le contraste */
+}
+.page {
+  background-color: transparent;
+  height: 100%;
+  width: 100%;
+}
+
+.background-image {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: -1; /* L'image de fond reste derrière le contenu */
+}
+
+.profile-content {
+  height: 100%;
+  z-index: 1;
+  padding: 20px;
+}
+
+
+.user-name-overlay {
+  font-size: 18px;
+  margin-top:60px;
+  font-weight: bold;
+  color: $light-color; /* Blanc pour se démarquer du fond */
+  text-align: center;
+}
+
+.profile-page {
+  height: 100%;
+}
+
+
+.form {
+  margin-top: 600px;
+  height: 100%;
+
+  .form-group {
+    margin-bottom: 15px;
+
+    .label {
+      font-size: 14px;
+      color: darken($input-border, 20%);
+      margin-bottom: 50px;
+    }
+
+    .input {
+      background-color: $input-bg;
+      border-radius: 10px;
+      padding: 10px;
+      border: 1px solid $input-border;
+      font-size: 16px;
+    }
+
+    .textarea {
+      height: 80px;
+    }
+  }
+
+  .save-button {
+    background-color: $bleu-color;
+    //color: $light-color;
+    padding: 15px;
+    border-radius: 25px;
+    width: 50%;
+    font-size: 16px;
+    text-align: center;
+  }
+}
+
+//////fin css profil
+ /////css offres
+
+/* Couleur bleu foncé */
+$blue-fonce: #1A237E;
+$light-color: #fff;
+$red-color: #ff0000;
+$gray-color: #999;
+
+// Styles de l'ActionBar
+.action-bar {
+  background-color: $blue-fonce;
+  color: $light-color;
+}
+
+.page {
+  background-color: $light-color;
+  height: 100%;
+  width: 100%;
+}
+
+.offers-content {
+  padding: 20px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: $blue-fonce;
+  margin-bottom: 20px;
+}
+
+.product-list {
+  margin-top: 10px;
+}
+
+.product-item {
+  margin-bottom: 20px;
+}
+
+.product-image {
+  width: 150px;
+  height: 150px;
+  border-radius: 10px;
+  margin-right: 18px;
+}
+
+.product-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: $blue-fonce;
+}
+
+.product-category {
+  font-size: 14px;
+  color: $gray-color;
+  margin-top: 4px;
+}
+
+.product-pricing {
+  margin-top: 5px;
+  justify-content: space-between;
+}
+
+.original-price {
+  font-size: 16px;
+  text-decoration: line-through;
+  color: $red-color;
+  margin-right: 10px;
+}
+
+.current-price {
+  font-size: 16px;
+  font-weight: bold;
+  color: $blue-fonce;
+}
+
+ ///fin offres
+
+
 
 
 .forgot-password {
@@ -101,7 +298,7 @@
 
 .login-button {
   background-color: #1f1f44; /* Bleu foncé */
-  color: white;
+  color:#ffffff;
   font-size: 18px;
   font-weight: bold;
   margin-top: 20px;
@@ -114,6 +311,19 @@
   color: #808080; /* Gris */
   margin-top: 20px;
 }
+// scrum38
+
+  .save-button {
+    background-color: $primary-color;
+    color: $light-color;
+    padding: 15px;
+    border-radius: 25px;
+    width: 100%;
+    font-size: 16px;
+    text-align: center;
+  }
+
+
 .register-link {
   font-size: 14px;
   color: #1f1f44;
@@ -124,18 +334,26 @@
 //barre pour la page rechercher
 .search-bar {
     margin: 10;
-    border-radius: 28;
+    border-radius: 0.6px;
+    border-color:#8E8383;
     height: 40;
     width: 250;
+    border: solid;
 }
+.search-bar-container{
+    border: 0.6px solid #8E8383;
+    }
 //button pour page rechercher
 .search-button {
-    background-color: #3B5DBA;
     color: #ffffff;
-    border-radius: 28;
+    background-color: #1C1D53;
+    border-radius: 20px;
     height: 40;
     margin-top: 10;
     width: 125;
+}
+.search-button:hover {
+    background-color: #1C1D53;
 }
 //codde pour la barre des items
 .custom-tabview {
@@ -166,6 +384,7 @@ TabViewItem {
     height: 24;
     margin-bottom: 5;
 }
+
 .pdetails-titre {
     font-family: Inter;
     font-size: 25px;
@@ -250,4 +469,82 @@ TabViewItem {
   separator-color: transparent;
 }
 
+
+=======
+//ADDlivraison
+
+.titre {
+    font-size: 28px;
+    color: #F8F8F8;
+    font-weight: bold;
+    margin-top: 20;
+    margin-bottom:200px;
+    text-align:center;
+
+}
+
+.champ-texte-conteneur {
+  padding: 15px; /* Ajout de padding pour l'espace intérieur */
+  background-color: #f8f8f8; /* Fond clair */
+  font-size: 20px; /* Ajuster la taille de la police */
+  text-align: left;
+  margin-bottom: 15;
+  width:342;
+  border-radius: 8px; /* Coins arrondis */
+  border: 1.5px solid #8E8383;
+}
+
+.lien-pied-de-page {
+    font-size: 12px;
+    color: #1C1D53;
+    text-decoration: none;
+    cursor: pointer;
+}
+.ajouterAdresse{
+    width: 300;
+    padding: 10px;
+    color: #E95322;
+    background-color: #FFDECF;
+    border-radius: 100px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 40;
+    }
+.ajouterAdresse:hover {
+    background-color: #FFDECF;
+}
+//button page livraison
+.b-adress{
+    width: 300;
+    padding: 10px;
+    color: #E95322;
+    background-color: #FFDECF;
+    border-radius: 100px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 60;
+    }
+.b-adress:hover {
+    background-color: #FFDECF;
+}
+//background adresse livraison
+.backgr-livraison{
+    background-color:#1C1D53;
+    }
+    //titre
+.titre-pLivraison {
+    font-size: 28px;
+    color: #F8F8F8;
+    font-weight: bold;
+    margin-top: 248px;
+    text-align:center;
+
+}
+//button retour
+.boutton-retour{
+    color:#E95322;
+    font-size:28px;
+    top: 2px;
+    left: 3px;
+    }
 

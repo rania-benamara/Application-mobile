@@ -1,41 +1,66 @@
+<!-- components/Home.vue -->
 <template>
-    <Page>
-        <ActionBar>
-            <Label text="Home"/>
-        </ActionBar>
+  <Page actionBarHidden="true">
+    <GridLayout rows="*, auto">
+      <!-- Main content area -->
+      <StackLayout row="0" @tap="closeMenu">
+        <Label :text="'Content: ' + currentPage" class="page-content"/>
+      </StackLayout>
 
-        <GridLayout>
-            <Label class="info">
-                <FormattedString>
-                    <Span class="fas" text.decode="&#xf135; "/>
-                    <Span :text="message"/>
-                </FormattedString>
-            </Label>
-        </GridLayout>
-    </Page>
+      <!-- Menu component -->
+      <Menu v-if="isMenuVisible" row="0" rowSpan="2" @menuTap="onMenuTap" />
+
+      <!-- Bottom bar with menu icon -->
+      <StackLayout row="1" class="bottom-bar" v-if="!isMenuVisible">
+        <Label text="☰" class="menu-icon" @tap="openMenu" />
+      </StackLayout>
+    </GridLayout>
+  </Page>
 </template>
 
 <script>
-  export default {
-    computed: {
-      message() {
-        return "Blank {N}-Vue app";
-      }
+import Menu from './Menu'
+
+export default {
+  components: {
+    Menu
+  },
+  data() {
+    return {
+      currentPage: 'Home',
+      isMenuVisible: false
     }
-  };
+  },
+  methods: {
+    openMenu() {
+      this.isMenuVisible = true;
+    },
+    closeMenu() {
+      if (this.isMenuVisible) {
+        this.isMenuVisible = false;
+      }
+    },
+    onMenuTap(item) {
+      this.currentPage = item;
+      this.closeMenu();
+    }
+  }
+}
 </script>
 
-<style scoped lang="scss">
-    @import '@nativescript/theme/scss/variables/blue';
-
-    // Custom styles
-    .fas {
-        @include colorize($color: accent);
-    }
-
-    .info {
-        font-size: 20;
-        horizontal-align: center;
-        vertical-align: center;
-    }
+<style scoped>
+.page-content {
+  font-size: 20;
+  margin: 10;
+}
+.bottom-bar {
+  background-color: #f0f0f0;
+  height: 50;
+}
+.menu-icon {
+  font-size: 28;
+  text-align: center;
+  vertical-align: center;
+  height: 50;
+}
 </style>

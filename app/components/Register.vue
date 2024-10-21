@@ -1,6 +1,5 @@
 <template>
-  <Page>
-    <ActionBar title="Créer un compte" class="action-bar" />
+  <Page actionBarHidden="true">
     <StackLayout class="container">
       <Label text="Créez un compte" class="title" />
       <Label text="Créez votre compte et commencez votre aventure pâtissière avec nous!" class="description" />
@@ -29,7 +28,25 @@
       <Button text="Créer" class="create-button" @tap="" />
 
       <Label class="footer" text="Vous avez déjà un compte ? " />
-      <Label text="Connexion" class="footer-link" @tap="" />
+      <Label text="Connexion" class="footer-link" @tap="loginlink" />
     </StackLayout>
   </Page>
 </template>
+
+<script>
+import Login from './Login'
+export default {
+  data() {
+    return {
+
+      mot_de_passe: '',
+    };
+  },
+  methods: {
+
+      loginlink() {
+        this.$navigateTo(Login);
+      },
+  },
+};
+</script>

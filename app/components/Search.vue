@@ -3,7 +3,7 @@
         <GridLayout rows="auto, *, auto">
             <!-- Barre de recherche en haut -->
             <StackLayout row="0" orientation="horizontal" horizontalAlignment="center" marginTop="20">
-                <!--<Image src="~/images/Vector.png" class="back-image" @tap=""></Image>-->
+                <Label text="<" class="boutton-retour" @tap="" />
                 <SearchBar hint="Rechercher" class="search-bar"></SearchBar>
                 <Button text="RECHERCHER" class="search-button"></Button>
             </StackLayout>
