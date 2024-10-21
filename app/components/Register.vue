@@ -1,6 +1,5 @@
 <template>
-  <Page>
-    <ActionBar title="Créer un compte" class="action-bar" />
+  <Page actionBarHidden="true">
     <StackLayout class="container">
       <Label text="Créez un compte" class="title" />
       <Label text="Créez votre compte et commencez votre aventure pâtissière avec nous!" class="description" />

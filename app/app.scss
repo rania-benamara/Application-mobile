@@ -3,21 +3,31 @@
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     background-color: #ffffff;
-    text-align: center;
+    text-align:center;
     font-family: 'Arial', sans-serif;
 }
 
 .title {
-    font-size: 28px;
-    color: #333388;
-    font-weight: bold;
-    margin-bottom: 50px;
+    font-family: Outfit;
+    font-size: 35px;
+    font-weight: 700;
+    line-height: 44.1px;
+    text-align: left;
+    color:#1C1D53;
+    margin-top:68px;
+    margin-left:40px;
 }
 
 .description {
-    font-size: 12px;
-    color: #333388;
-    margin-bottom: 250px;
+    font-family: Outfit;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 25.2px;
+    text-align: left;
+    margin-bottom:122px;
+    margin-left:40px;
+    color:#1C1D53;
+
 }
 
 
@@ -35,13 +45,28 @@
   margin-bottom: 40px;
 }
 .text-field-container {
-    background-color: #fafafa;
-    padding: 10px;
     margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-}
+    border-width: 1px;
+    border-color: #8E8383;
+    border-radius: 5px;
+    border: 0.6px solid #8E8383;
+    padding: 10px;
+    background-color: #f9f9f9;
+    text-align:left;
+    font-family: Outfit;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 20.16px;
+    width:342;
+    margin-bottom:30px;
 
+}
+TextField {
+    border-width: 0;
+    border-bottom-width: 0; /* Pour Android */
+    background-color: transparent;
+    box-shadow: none; /* Supprimer tout effet d'ombre */
+}
 .login-title {
   font-size: 23px;
   font-weight: bold;
@@ -50,15 +75,20 @@
 }
 
 .create-button {
-    width: 100%;
+    width: 250;
     padding: 10px;
-    background-color: #1a1a6a;
     color: #ffffff;
-    border-radius: 8px;
+    background-color: #1C1D53;
     font-size: 16px;
     font-weight: bold;
-    margin-top: 10px;
+    margin-top:61;
+    height:60;
+    font-family: Outfit;
 }
+.create-button-container{
+    border: 0.6px solid #8E8383;
+    border-radius: 5px 0px 0px 0px;
+    }
 
 .subtitle {
   font-size: 14px;
@@ -73,8 +103,9 @@
   border-color :#808080;
   text-align: left;
 
+
 }
-.create-button:hover {
+.create-button :hover {
     background-color: #333388;
 }
 
@@ -86,7 +117,7 @@
 
 
 .footer-link {
-    color: #1a1a1a;
+    color: #1C1D53;
     font-weight: bold;
     cursor: pointer;
 }
@@ -124,18 +155,26 @@
 //barre pour la page rechercher
 .search-bar {
     margin: 10;
-    border-radius: 28;
+    border-radius: 0.6px;
+    border-color:#8E8383;
     height: 40;
     width: 250;
+    border: solid;
 }
+.search-bar-container{
+    border: 0.6px solid #8E8383;
+    }
 //button pour page rechercher
 .search-button {
-    background-color: #3B5DBA;
     color: #ffffff;
-    border-radius: 28;
+    background-color: #1C1D53;
+    border-radius: 20px;
     height: 40;
     margin-top: 10;
     width: 125;
+}
+.search-button:hover {
+    background-color: #1C1D53;
 }
 //codde pour la barre des items
 .custom-tabview {
@@ -166,3 +205,79 @@ TabViewItem {
     height: 24;
     margin-bottom: 5;
 }
+//ADDlivraison
+
+.titre {
+    font-size: 28px;
+    color: #F8F8F8;
+    font-weight: bold;
+    margin-top: 20;
+    margin-bottom:200px;
+    text-align:center;
+
+}
+
+.champ-texte-conteneur {
+  padding: 15px; /* Ajout de padding pour l'espace intérieur */
+  background-color: #f8f8f8; /* Fond clair */
+  font-size: 20px; /* Ajuster la taille de la police */
+  text-align: left;
+  margin-bottom: 15;
+  width:342;
+  border-radius: 8px; /* Coins arrondis */
+  border: 1.5px solid #8E8383;
+}
+
+.lien-pied-de-page {
+    font-size: 12px;
+    color: #1C1D53;
+    text-decoration: none;
+    cursor: pointer;
+}
+.ajouterAdresse{
+    width: 300;
+    padding: 10px;
+    color: #E95322;
+    background-color: #FFDECF;
+    border-radius: 100px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 40;
+    }
+.ajouterAdresse:hover {
+    background-color: #FFDECF;
+}
+//button page livraison
+.b-adress{
+    width: 300;
+    padding: 10px;
+    color: #E95322;
+    background-color: #FFDECF;
+    border-radius: 100px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 60;
+    }
+.b-adress:hover {
+    background-color: #FFDECF;
+}
+//background adresse livraison
+.backgr-livraison{
+    background-color:#1C1D53;
+    }
+    //titre
+.titre-pLivraison {
+    font-size: 28px;
+    color: #F8F8F8;
+    font-weight: bold;
+    margin-top: 248px;
+    text-align:center;
+
+}
+//button retour
+.boutton-retour{
+    color:#E95322;
+    font-size:28px;
+    top: 2px;
+    left: 3px;
+    }
