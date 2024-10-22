@@ -1,4 +1,3 @@
-
 import Vue from 'nativescript-vue';
 import Home from './components/Home';
 import Login from './components/Login';
@@ -14,13 +13,37 @@ import NousContacter from './components/NousContacter';
 import Accueil from './components/Accueil';
 import SupprimerProfile from './components/SupprimerProfile';
 import Panier from './components/Panier';
-import LogoBarre from './components/LogoBarre'
-import Search from './components/Search'
-import Livraison from './components/Livraison'
-import AddLivraison from './components/AddLivraison'
-import AfficherDetails from './components/AfficherDetails'
+import LogoBarre from './components/LogoBarre';
+import Search from './components/Search';
+import Livraison from './components/Livraison';
+import AddLivraison from './components/AddLivraison';
+import AfficherDetails from './components/AfficherDetails';
+
+// Enable Vue logging
+Vue.config.silent = false;
+Vue.config.debug = true;
+
+// Register components globally if needed
+Vue.component('Home', Home);
+Vue.component('Login', Login);
+Vue.component('Register', Register);
+Vue.component('Profile', Profile);
+Vue.component('Offres', Offres);
+Vue.component('SaleCategorie', SaleCategorie);
+Vue.component('ForgotPassword', ForgotPassword);
+Vue.component('ResetPassword', ResetPassword);
+Vue.component('AllProducts', AllProducts);
+Vue.component('MesCommandes', MesCommandes);
+Vue.component('NousContacter', NousContacter);
+Vue.component('Accueil', Accueil);
+Vue.component('SupprimerProfile', SupprimerProfile);
+Vue.component('Panier', Panier);
+Vue.component('LogoBarre', LogoBarre);
+Vue.component('Search', Search);
+Vue.component('Livraison', Livraison);
+Vue.component('AddLivraison', AddLivraison);
+Vue.component('AfficherDetails', AfficherDetails);
+
 new Vue({
-  render: (h) => h(AfficherDetails),
-  }).$start()
-
-
+  render: h => h('frame', [h(Accueil)])
+}).$start();

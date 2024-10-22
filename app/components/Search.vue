@@ -39,3 +39,10 @@
         </GridLayout>
     </Page>
 </template>
+
+<script>
+export default {
+  name: 'Search',
+  // Add any necessary component logic here
+}
+</script>

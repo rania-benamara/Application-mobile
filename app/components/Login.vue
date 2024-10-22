@@ -15,7 +15,8 @@
       <Label text="Mot de passe oublié ?" class="forgot-password" />
 
       <!-- Bouton Se connecter -->
-      <Button text="Se connecter" class="login-button" @tap="goToaccueil" />
+      <Button text="Se connecter" class="login-button" @tap="goToAccueil"/>
+
 
       <!-- Lien pour créer un compte -->
       <Label text="Vous n'avez pas de compte ?" class="register-text" />
@@ -24,27 +25,49 @@
   </Page>
 </template>
 
+
 <script>
-import Accueil from './Accueil'
-import Register from './Register'
+import Accueil from './Accueil.vue';
+import Register from './Register.vue';
 
 export default {
   data() {
     return {
-
-      mot_de_passe: '',
+      email: '',
+      mot_de_passe: ''
     };
   },
   methods: {
-      goToaccueil() {
-            this.$navigateTo(Accueil);
-      },
-      registerlink() {
-        this.$navigateTo(Register);
-      },
-  },
+    goToAccueil() {
+      console.log("Attempting to navigate to Accueil");
+      this.$navigateTo(Accueil, {
+        clearHistory: true,
+        transition: {
+          name: "fade"
+        }
+      }).then(() => {
+        console.log("Navigation to Accueil successful");
+      }).catch(error => {
+        console.error("Navigation to Accueil failed:", error);
+      });
+    },
+    registerlink() {
+      console.log("Attempting to navigate to Register");
+      this.$navigateTo(Register, {
+        transition: {
+          name: "slide"
+        }
+      }).then(() => {
+        console.log("Navigation to Register successful");
+      }).catch(error => {
+        console.error("Navigation to Register failed:", error);
+      });
+    }
+  }
 };
 </script>
+
+
 <style scoped>
 
 /* Styles */

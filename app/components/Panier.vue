@@ -90,6 +90,7 @@
 import Login from './Login'
 
 export default {
+  name: 'Panier',
   data() {
     return {
       favoriteProducts: [
