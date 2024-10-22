@@ -1,5 +1,5 @@
-import Vue from 'nativescript-vue';
 
+import Vue from 'nativescript-vue';
 import Home from './components/Home';
 import Login from './components/Login';
 import Register from './components/Register';
@@ -14,10 +14,13 @@ import NousContacter from './components/NousContacter';
 import Accueil from './components/Accueil';
 import SupprimerProfile from './components/SupprimerProfile';
 import Panier from './components/Panier';
-
+import LogoBarre from './components/LogoBarre'
+import Search from './components/Search'
+import Livraison from './components/Livraison'
+import AddLivraison from './components/AddLivraison'
+import AfficherDetails from './components/AfficherDetails'
 new Vue({
-  render: (h) => h('frame', [
-    h(NousContacter),
-    h(Panier)
-  ]),
-}).$start();
+  render: (h) => h(AfficherDetails),
+  }).$start()
+
+
