@@ -39,3 +39,55 @@
         </GridLayout>
     </Page>
 </template>
+<style scoped>
+.boutton-retour{
+    color:#E95322;
+    font-size:28px;
+    top: 2px;
+    left: 3px;
+    }
+.search-bar {
+    margin: 10;
+    border-radius: 0.6px;
+    border-color:#8E8383;
+    height: 40;
+    width: 250;
+    border: solid;
+}
+.search-bar-container{
+    border: 0.6px solid #8E8383;
+    }
+ .custom-tabview {
+     background-color: #ffffff;
+     border-top-width: 1;
+     border-top-color: #cccccc;
+     height: 60;
+ }
+ .small-title .tab-title {
+     font-size: 5px; /* Ajustez la taille selon vos besoins */
+     margin: 0; /* Réduisez les marges pour plus d'espace */
+     width:60px;
+ }
+
+ .custom-tabview .tab-view-item {
+     flex: 1;
+     text-align: center;
+     width:60;
+
+ }
+ TabViewItem {
+     width: 120;
+     text-align: center;
+ }
+ .search-button {
+     color: #ffffff;
+     background-color: #1C1D53;
+     border-radius: 20px;
+     height: 40;
+     margin-top: 10;
+     width: 125;
+ }
+ .search-button:hover {
+     background-color: #1C1D53;
+ }
+</style>

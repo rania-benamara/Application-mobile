@@ -9,7 +9,7 @@
         <ListView>
           <!-- Liste d'adresses ici -->
         </ListView>
-        <Button text="Ajouter une nouvelle adresse" @tap="onAddAddressTap" class="b-adress" />
+        <Button text="Ajouter une nouvelle adresse" @tap="" class="b-adress" />
       </StackLayout>
 
       <!-- TabView pour la barre de navigation en bas -->
@@ -43,3 +43,35 @@
     </GridLayout>
   </Page>
 </template>
+<style scoped>
+.backgr-livraison{
+    background-color:#1C1D53;
+    }
+.boutton-retour{
+    color:#E95322;
+    font-size:28px;
+    top: 2px;
+    left: 3px;
+    }
+.titre-pLivraison {
+    font-size: 28px;
+    color: #F8F8F8;
+    font-weight: bold;
+    margin-top: 248px;
+    text-align:center;
+
+}
+.b-adress{
+    width: 300;
+    padding: 10px;
+    color: #E95322;
+    background-color: #FFDECF;
+    border-radius: 100px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 60;
+    }
+.b-adress:hover {
+    background-color: #FFDECF;
+}
+</style>
