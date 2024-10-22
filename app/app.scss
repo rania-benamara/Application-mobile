@@ -8,25 +8,8 @@ $input-border: #eaeaea;
 $red-color: #ff0000;
 $gray-color: #999;
 
-.container {
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    background-color: #ffffff;
-    text-align:center;
-    font-family: 'Arial', sans-serif;
-}
 
-.title {
-    font-family: Outfit;
-    font-size: 35px;
-    font-weight: 700;
-    line-height: 44.1px;
-    text-align: left;
-    color:#1C1D53;
-    margin-top:68px;
-    margin-left:40px;
-}
+
 
 .description {
     font-family: Outfit;
@@ -54,23 +37,7 @@ $gray-color: #999;
   align-self: center;
   margin-bottom: 40px;
 }
-.text-field-container {
-    margin: 10px 0;
-    border-width: 1px;
-    border-color: #8E8383;
-    border-radius: 5px;
-    border: 0.6px solid #8E8383;
-    padding: 10px;
-    background-color: #f9f9f9;
-    text-align:left;
-    font-family: Outfit;
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 20.16px;
-    width:342;
-    margin-bottom:30px;
 
-}
 TextField {
     border-width: 0;
     border-bottom-width: 0; /* Pour Android */
@@ -84,21 +51,7 @@ TextField {
   margin-top: 20px;
 }
 
-.create-button {
-    width: 250;
-    padding: 10px;
-    color: #ffffff;
-    background-color: #1C1D53;
-    font-size: 16px;
-    font-weight: bold;
-    margin-top:61;
-    height:60;
-    font-family: Outfit;
-}
-.create-button-container{
-    border: 0.6px solid #8E8383;
-    border-radius: 5px 0px 0px 0px;
-    }
+
 
 .subtitle {
   font-size: 14px;
@@ -115,22 +68,9 @@ TextField {
 
 
 }
-.create-button :hover {
-    background-color: #333388;
-}
 
 
-.footer {
-    margin-top: 20px;
-    font-size: 12px;
-}
 
-
-.footer-link {
-    color: #1C1D53;
-    font-weight: bold;
-    cursor: pointer;
-}
 // css profillllll
 
 .action-bar {
@@ -311,7 +251,7 @@ $gray-color: #999;
   color: #808080; /* Gris */
   margin-top: 20px;
 }
-// scrum38
+
 
   .save-button {
     background-color: $primary-color;
@@ -323,7 +263,6 @@ $gray-color: #999;
     text-align: center;
   }
 
-
 .register-link {
   font-size: 14px;
   color: #1f1f44;
@@ -332,52 +271,9 @@ $gray-color: #999;
 }
 
 //barre pour la page rechercher
-.search-bar {
-    margin: 10;
-    border-radius: 0.6px;
-    border-color:#8E8383;
-    height: 40;
-    width: 250;
-    border: solid;
-}
-.search-bar-container{
-    border: 0.6px solid #8E8383;
-    }
-//button pour page rechercher
-.search-button {
-    color: #ffffff;
-    background-color: #1C1D53;
-    border-radius: 20px;
-    height: 40;
-    margin-top: 10;
-    width: 125;
-}
-.search-button:hover {
-    background-color: #1C1D53;
-}
-//codde pour la barre des items
-.custom-tabview {
-    background-color: #ffffff;
-    border-top-width: 1;
-    border-top-color: #cccccc;
-    height: 60;
-}
-.small-title .tab-title {
-    font-size: 5px; /* Ajustez la taille selon vos besoins */
-    margin: 0; /* Réduisez les marges pour plus d'espace */
-    width:60px;
-}
 
-.custom-tabview .tab-view-item {
-    flex: 1;
-    text-align: center;
-    width:60;
 
-}
-TabViewItem {
-    width: 120;
-    text-align: center;
-}
+
 
 .custom-tabview .tab-view-item .tab-view-item-icon {
     width: 24;
@@ -385,111 +281,9 @@ TabViewItem {
     margin-bottom: 5;
 }
 
-.pdetails-titre {
-    font-family: Inter;
-    font-size: 25px;
-    font-weight: 500;
-    line-height: 24.2px;
-    text-align: left;
-    margin-left: 30px;
-    color: #000000;
-    margin: 32px 0; /* Ajoute plus d'espace sous l'image */
-}
-
-.product-image {
-  width: 100%;
-  height: auto;
-  border-radius: 10px;
-  margin-bottom: 30px; /* Réduction de l'espacement entre l'image et le titre */
-}
-
-.pdetails-description {
-  font-size: 14px;
-  text-align: left;
-  margin: 0 16px 24px 16px; /* Ajoute de l'espace au-dessus et au-dessous de la description */
-}
-
-.counter-container {
-  margin: 24px 0; /* Espacement autour du compteur */
-  display: flex;
-  justify-content: flex-end; /* Aligne à droite */
-  align-items: center; /* Assure que les éléments sont bien alignés verticalement */
-}
-
-.btn-counter {
-  font-size: 14px;
-  color: white; /* Texte blanc */
-  background-color: #1a1a6a; /* Même couleur que "Ajouter au panier" */
-  border-radius: 5px;
-  padding: 5px; /* Taille de padding réduite */
-  width: 80px;
-  height: 80px;
-  text-align: center; /* Centrer le texte */
-  margin-left: 10px; /* Ajoute de l'espace entre les boutons */
-}
-
-.counter-display {
-  font-size: 20px;
-  margin: 0 16px;
-  text-align: center;
-}
-
 .button-container {
   margin: 24px 0; /* Ajoute de l'espace autour des boutons */
   padding: 16px;
-}
-
-.pdetail-ajouter {
-  background-color: #1a1a6a;
-  color: #ffffff;
-  border-radius: 8px;
-  font-size: 14px; /* Taille du bouton réduite */
-  font-weight: bold;
-  text-align: center;
-  padding: 8px; /* Taille de padding réduite pour ajuster le bouton */
-  width: 60%; /* Réduit la largeur du bouton */
-  margin-left: auto;
-  margin-right: auto;
-  display: inline-block;
-}
-
-.icon-heart {
-  margin-left: 10px; /* Rapproche le cœur du bouton "Ajouter au panier" */
-  vertical-align: middle;
-}
-
-.pdetail-ajouter-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-//enlever le trait de la barre de logo
-.custom-tabview {
-  border-width: 0;
-  separator-color: transparent;
-}
-
-//ADDlivraison
-
-.titre {
-    font-size: 28px;
-    color: #F8F8F8;
-    font-weight: bold;
-    margin-top: 20;
-    margin-bottom:200px;
-    text-align:center;
-
-}
-
-.champ-texte-conteneur {
-  padding: 15px; /* Ajout de padding pour l'espace intérieur */
-  background-color: #f8f8f8; /* Fond clair */
-  font-size: 20px; /* Ajuster la taille de la police */
-  text-align: left;
-  margin-bottom: 15;
-  width:342;
-  border-radius: 8px; /* Coins arrondis */
-  border: 1.5px solid #8E8383;
 }
 
 .lien-pied-de-page {
@@ -498,51 +292,4 @@ TabViewItem {
     text-decoration: none;
     cursor: pointer;
 }
-.ajouterAdresse{
-    width: 300;
-    padding: 10px;
-    color: #E95322;
-    background-color: #FFDECF;
-    border-radius: 100px;
-    font-size: 16px;
-    font-weight: bold;
-    margin-top: 40;
-    }
-.ajouterAdresse:hover {
-    background-color: #FFDECF;
-}
-//button page livraison
-.b-adress{
-    width: 300;
-    padding: 10px;
-    color: #E95322;
-    background-color: #FFDECF;
-    border-radius: 100px;
-    font-size: 16px;
-    font-weight: bold;
-    margin-top: 60;
-    }
-.b-adress:hover {
-    background-color: #FFDECF;
-}
-//background adresse livraison
-.backgr-livraison{
-    background-color:#1C1D53;
-    }
-    //titre
-.titre-pLivraison {
-    font-size: 28px;
-    color: #F8F8F8;
-    font-weight: bold;
-    margin-top: 248px;
-    text-align:center;
-
-}
-//button retour
-.boutton-retour{
-    color:#E95322;
-    font-size:28px;
-    top: 2px;
-    left: 3px;
-    }
 

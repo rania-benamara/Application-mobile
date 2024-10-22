@@ -26,3 +26,9 @@
         </GridLayout>
     </Page>
 </template>
+<style scoped>
+.custom-tabview {
+  border-width: 0;
+  separator-color: transparent;
+}
+</style>

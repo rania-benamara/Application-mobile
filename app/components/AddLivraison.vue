@@ -50,3 +50,44 @@
     </GridLayout>
   </Page>
 </template>
+<style scoped>
+.backgr-livraison{
+    background-color:#1C1D53;
+    }
+.titre {
+    font-size: 28px;
+    color: #F8F8F8;
+    font-weight: bold;
+    margin-top: 20;
+    margin-bottom:200px;
+    text-align:center;
+
+}
+.champ-texte-conteneur {
+  padding: 15px; /* Ajout de padding pour l'espace intérieur */
+  background-color: #f8f8f8; /* Fond clair */
+  font-size: 20px; /* Ajuster la taille de la police */
+  text-align: left;
+  margin-bottom: 15;
+  width:342;
+  border-radius: 8px; /* Coins arrondis */
+  border: 1.5px solid #8E8383;
+}
+.ajouterAdresse{
+    width: 300;
+    padding: 10px;
+    color: #E95322;
+    background-color: #FFDECF;
+    border-radius: 100px;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 40;
+    }
+.ajouterAdresse:hover {
+    background-color: #FFDECF;
+}
+.custom-tabview {
+  border-width: 0;
+  separator-color: transparent;
+}
+</style>
