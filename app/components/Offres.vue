@@ -9,7 +9,6 @@
     <StackLayout class="offers-content">
       <Label text="Offres" class="title" />
 
-
       <!-- Liste des produits favoris -->
       <ListView for="product in favoriteProducts" class="product-list">
         <v-template>
@@ -34,50 +33,6 @@
     </StackLayout>
   </Page>
 </template>
-
-<script>
-export default {
-  data() {
-    return {
-      favoriteProducts: [
-        {
-          name: "American Cookies",
-          category: "Cookies",
-          originalPrice: "$20.00",
-          currentPrice: "$8.00",
-          image: "~/images/cookies.png"
-        },
-        {
-          name: "Muffin bleuets",
-          category: "Cup Cake",
-          originalPrice: "$22.00",
-          currentPrice: "$9.00",
-          image: "~/images/muffin.png"
-        },
-        {
-          name: "Forêt noire",
-          category: "Donut",
-          originalPrice: "$25.00",
-          currentPrice: "$10.00",
-          image: "~/images/foretNoire.png"
-        },
-        {
-          name: "Cheesecake",
-          category: "Donut",
-          originalPrice: "$18.00",
-          currentPrice: "$8.00",
-          image: "~/images/cheesecake.png"
-        }
-      ]
-    };
-  },
-  methods: {
-    goBack() {
-      this.$navigateBack();
-    }
-  }
-};
-</script>
 
 <script>
 export default {

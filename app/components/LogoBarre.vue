@@ -1,4 +1,3 @@
-<!-- NavBar.vue -->
 <template>
   <GridLayout rows="auto" columns="*, *, *, *, *" class="bottom-nav">
     <Image src="~/images/accueil.png" col="0" class="nav-icon" @tap="navigateTo('Accueil')" />
@@ -42,7 +41,11 @@ export default {
             this.$navigateTo(module.default);
           }).catch(err => console.error("Failed to load Panier:", err));
           break;
-
+        case 'Favoris':
+          import('./Favoris.vue').then(module => {
+            this.$navigateTo(module.default);
+          }).catch(err => console.error("Failed to load Favoris:", err));
+          break;
         case 'Menu':
           console.log('Navigate to Menu - Not implemented yet');
           break;
@@ -57,11 +60,11 @@ export default {
 <style scoped>
 .bottom-nav {
   background-color: #ffffff;
-  height: 60;
+  height: 60px;
 }
 .nav-icon {
-  height: 24;
-  width: 24;
+  height: 24px;
+  width: 24px;
   vertical-align: middle;
 }
 </style>

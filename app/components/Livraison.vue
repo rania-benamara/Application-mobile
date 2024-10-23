@@ -70,4 +70,8 @@ export default {
 .b-adress:hover {
   background-color: #FFDECF;
 }
+.custom-tabview {
+  border-width: 0;
+  separator-color: transparent;
+}
 </style>

@@ -5,7 +5,7 @@
       <NavigationButton icon="~/images/back_icone.png" @tap="goBack" ios.position="left" />
     </ActionBar>
 
-    <!--hhhhtthh Contenu de la page -->
+    <!-- Contenu de la page -->
     <GridLayout rows="auto, *" columns="*">
       <!-- Image de fond qui occupe tout l'écran -->
       <Image src="~/images/fondProfil.png" stretch="aspectFill" class="background-image" rowSpan="2" />
@@ -33,7 +33,7 @@
               </StackLayout>
 
               <StackLayout class="form-group">
-                <Label text="Numéro de téléphone" class="label" />
+                <Label text="Numérooo de téléphone" class="label" />
                 <TextField v-model="phone" class="input" keyboardType="phone" />
               </StackLayout>
 

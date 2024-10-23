@@ -25,6 +25,7 @@
 
 <script>
 import LogoBarre from './LogoBarre.vue';
+
 export default {
   name: 'Search',
   components: {
@@ -55,6 +56,7 @@ export default {
   border-radius: 0.6px;
   border-color: #8E8383;
   height: 40;
+  border: solid;
 }
 
 .search-button {

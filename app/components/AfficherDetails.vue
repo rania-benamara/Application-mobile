@@ -129,3 +129,77 @@ export default {
   },
 };
 </script>
+<style scoped>
+.boutton-retour{
+    color:#E95322;
+    font-size:28px;
+    top: 2px;
+    left: 3px;
+    }
+.product-image {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin-bottom: 30px; /* Réduction de l'espacement entre l'image et le titre */
+}
+.pdetails-titre {
+    font-family: Inter;
+    font-size: 25px;
+    font-weight: 500;
+    line-height: 24.2px;
+    text-align: left;
+    margin-left: 30px;
+    color: #000000;
+    margin: 32px 0; /* Ajoute plus d'espace sous l'image */
+}
+.pdetails-description {
+  font-size: 14px;
+  text-align: left;
+  margin: 0 16px 24px 16px; /* Ajoute de l'espace au-dessus et au-dessous de la description */
+}
+.counter-container {
+  margin: 24px 0; /* Espacement autour du compteur */
+  display: flex;
+  justify-content: flex-end; /* Aligne à droite */
+  align-items: center; /* Assure que les éléments sont bien alignés verticalement */
+}
+.btn-counter {
+  font-size: 14px;
+  color: white; /* Texte blanc */
+  background-color: #1a1a6a; /* Même couleur que "Ajouter au panier" */
+  border-radius: 5px;
+  padding: 5px; /* Taille de padding réduite */
+  width: 80px;
+  height: 80px;
+  text-align: center; /* Centrer le texte */
+  margin-left: 10px; /* Ajoute de l'espace entre les boutons */
+}
+
+.counter-display {
+  font-size: 20px;
+  margin: 0 16px;
+  text-align: center;
+}
+.pdetail-ajouter {
+  background-color: #1a1a6a;
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 14px; /* Taille du bouton réduite */
+  font-weight: bold;
+  text-align: center;
+  padding: 8px; /* Taille de padding réduite pour ajuster le bouton */
+  width: 60%; /* Réduit la largeur du bouton */
+  margin-left: auto;
+  margin-right: auto;
+  display: inline-block;
+}
+.pdetail-ajouter-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.icon-heart {
+  margin-left: 10px; /* Rapproche le cœur du bouton "Ajouter au panier" */
+  vertical-align: middle;
+}
+</style>
