@@ -4,17 +4,13 @@
     <Image src="~/images/accueil.png" col="0" class="nav-icon" @tap="navigateTo('Accueil')" />
     <Image src="~/images/chercher.png" col="1" class="nav-icon" @tap="navigateTo('Search')" />
     <Image src="~/images/panier.png" col="2" class="nav-icon" @tap="navigateTo('Panier')" />
-    <Image src="~/images/favoris.png" col="3" class="nav-icon"  />
-    <Image src="~/images/menu.png" col="4" class="nav-icon"  />
+    <Image src="~/images/favoris.png" col="3" class="nav-icon" @tap="navigateTo('Favoris')" />
+    <Image src="~/images/menu.png" col="4" class="nav-icon" @tap="navigateTo('Menu')" />
   </GridLayout>
 </template>
 
 <script>
 import { File, knownFolders, path } from '@nativescript/core';
-import Search from './Search.vue';
-import Panier from './Panier.vue';
-import Accueil from './Accueil.vue';
-
 
 export default {
   name: 'NavBar',
@@ -32,13 +28,19 @@ export default {
     navigateTo(page) {
       switch(page) {
         case 'Accueil':
-          this.$navigateTo(Accueil);
+          import('./Accueil.vue').then(module => {
+            this.$navigateTo(module.default);
+          }).catch(err => console.error("Failed to load Accueil:", err));
           break;
         case 'Search':
-          this.$navigateTo(Search);
+          import('./Search.vue').then(module => {
+            this.$navigateTo(module.default);
+          }).catch(err => console.error("Failed to load Search:", err));
           break;
         case 'Panier':
-          this.$navigateTo(Panier);
+          import('./Panier.vue').then(module => {
+            this.$navigateTo(module.default);
+          }).catch(err => console.error("Failed to load Panier:", err));
           break;
 
         case 'Menu':

@@ -26,7 +26,7 @@
           <!-- Première Grille : 1ère Ligne avec 4 Colonnes -->
           <GridLayout columns="*,*,*,*" rows="auto" class="offer-grid2">
             <StackLayout class="categorie1" row="0" col="0">
-              <Image src="~/images/1.png" class="offer-image2" />
+              <Image src="~/images/1.png" class="offer-image2"  @tap="goToSaleCategorie"/>
               <Label text="Cookies" class="category-label" />
             </StackLayout>
             <StackLayout class="categorie2" row="0" col="1">
@@ -63,7 +63,7 @@
             </StackLayout>
           </GridLayout>
 
-          <Button text="Tous les Produits" class="all-products-button"/>
+          <Button text="Tous les Produits" class="all-products-button" @tap="goToProduits"/>
         </StackLayout>
       </ScrollView>
 
@@ -75,15 +75,45 @@
 
 <script>
 import LogoBarre from './LogoBarre.vue';
+import AllProducts from './AllProducts.vue';
+import SaleCategorie from './SaleCategorie.vue';
 
 export default {
   name: 'Accueil',
   components: {
     LogoBarre
   },
-  mounted() {
-    console.log('Accueil component mounted');
-  }
+
+  methods: {
+      goToProduits() {
+        console.log("Attempting to navigate to Produits");
+        this.$navigateTo(AllProducts, {
+          clearHistory: true,
+          transition: {
+            name: "fade"
+          }
+        }).then(() => {
+          console.log("Navigation to Accueil successful");
+        }).catch(error => {
+          console.error("Navigation to Accueil failed:", error);
+        });
+      },
+
+     goToSaleCategorie() {
+      this.$navigateTo(SaleCategorie, {
+        transition: { name: "fade" }
+      }).then(() => {
+        console.log("Navigation to SaleCategorie successful");
+      }).catch(error => {
+        console.error("Navigation to SaleCategorie failed:", error);
+      });
+},
+
+      mounted() {
+          console.log('Accueil component mounted');
+        }
+   }
+
 };
 </script>
 

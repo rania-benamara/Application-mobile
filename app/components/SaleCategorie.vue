@@ -1,38 +1,48 @@
 <!-- components/SaleCategorie.vue -->
 <template>
   <Page>
-    <ActionBar flat="true">
-      <GridLayout columns="auto, *" rows="auto, auto" class="action-bar-layout">
-        <Image src="~/images/gobackIcon.png" col="0" row="0" class="back-icon" @tap="goBack" />
-        <Label text="Salé" col="0" row="1" colSpan="2" class="category-title" />
-      </GridLayout>
-    </ActionBar>
-    <ScrollView>
-      <GridLayout columns="*, *" rows="auto" class="product-grid">
-        <StackLayout v-for="(product, index) in products" :key="index"
-                     :col="index % 2" :row="Math.floor(index / 2)"
-                     class="product-item">
-          <GridLayout rows="auto" columns="*">
-            <Image :src="product.image" stretch="aspectFill" class="product-image"/>
-            <Label :text="formatPrice(product.price)" class="product-price"/>
+    <GridLayout rows="auto, *, auto">
+      <StackLayout row="0">
+        <ActionBar flat="true">
+          <GridLayout columns="auto, *" rows="auto, auto" class="action-bar-layout">
+            <Image src="~/images/gobackIcon.png" col="0" row="0" class="back-icon" @tap="goBack" />
+            <Label text="Salé" col="0" row="1" colSpan="2" class="category-title" />
           </GridLayout>
-          <StackLayout class="product-info">
-            <Label :text="product.name" class="product-name"/>
-            <Label :text="product.category" class="product-category"/>
+        </ActionBar>
+      </StackLayout>
+
+      <ScrollView row="1">
+        <GridLayout columns="*, *" rows="auto" class="product-grid">
+          <StackLayout v-for="(product, index) in products" :key="index" :col="index % 2" :row="Math.floor(index / 2)" class="product-item">
+            <GridLayout rows="auto" columns="*">
+              <Image :src="product.image" stretch="aspectFill" class="product-image"/>
+              <Label :text="formatPrice(product.price)" class="product-price"/>
+            </GridLayout>
+            <StackLayout class="product-info">
+              <Label :text="product.name" class="product-name"/>
+              <Label :text="product.category" class="product-category"/>
+            </StackLayout>
+            <GridLayout rows="auto" columns="auto, *, auto" class="product-details">
+              <Image :src="product.isFavorite ? '~/images/favoriteIcon.png' : '~/images/favoriteIcon.png'" col="0" class="favorite-icon" @tap="toggleFavorite(index)"/>
+              <Label :text="product.rating.toFixed(1)" col="2" class="product-rating"/>
+            </GridLayout>
           </StackLayout>
-          <GridLayout rows="auto" columns="auto, *, auto" class="product-details">
-            <Image :src="product.isFavorite ? '~/images/favoriteIcon.png' : '~/images/favoriteIcon.png'"
-                   col="0" class="favorite-icon" @tap="toggleFavorite(index)"/>
-            <Label :text="product.rating.toFixed(1)" col="2" class="product-rating"/>
-          </GridLayout>
-        </StackLayout>
-      </GridLayout>
-    </ScrollView>
+        </GridLayout>
+      </ScrollView>
+
+      <!-- LogoBarre component -->
+      <LogoBarre row="2" />
+    </GridLayout>
   </Page>
 </template>
 
 <script>
+import { Frame } from '@nativescript/core';
 export default {
+  name: 'SaleCategorie',
+  components: {
+    LogoBarre: () => import('./LogoBarre.vue')
+  },
   data() {
     return {
       products: [
@@ -51,8 +61,14 @@ export default {
       this.products[index].isFavorite = !this.products[index].isFavorite;
     },
     goBack() {
-      this.$navigateBack();
-    }
+        console.log("Go back tapped");
+        const frame = Frame.topmost();
+        if (frame.canGoBack()) {
+          frame.goBack();
+        } else {
+          console.log("No page to go back to");
+        }
+      }
   }
 }
 </script>
@@ -85,7 +101,7 @@ export default {
 }
 .product-image {
   width: 100%;
-  height: 120; /* Reduced height */
+  height: 120;
   border-top-left-radius: 10;
   border-top-right-radius: 10;
 }
@@ -108,14 +124,14 @@ export default {
   font-size: 18;
   font-weight: 700;
   color: #FF4A4C;
-  horizontal-align:center;
+  horizontal-align: center;
 }
 .product-category {
   font-size: 14;
   color: #ACA9A7;
-  font-weight:400;
+  font-weight: 400;
   margin-top: 2;
-  horizontal-align:center;
+  horizontal-align: center;
 }
 .product-details {
   padding: 10;
