@@ -12,14 +12,17 @@
           <Label text="Email" class="input-label" />
           <TextField v-model="email" hint="Entrez votre email" keyboardType="email" autocorrect="false" autocapitalizationType="none" class="input" />
         </StackLayout>
-        <Button text="Suivant" @tap="onSubmit" class="submit-button" />
+        <Button text="Suivant" @tap="goResetPwd" class="submit-button" />
       </StackLayout>
     </GridLayout>
   </Page>
 </template>
 
 <script>
+import ResetPassword from './ResetPassword.vue';
+
 export default {
+  name: "ForgotPassword",
   data() {
     return {
       email: ''
@@ -33,6 +36,19 @@ export default {
     },
     goBack() {
       this.$navigateBack();
+    },
+
+    goResetPwd() {
+      console.log("Attempting to navigate to Register");
+                  this.$navigateTo(ResetPassword, {
+                    transition: {
+                      name: "slide"
+                    }
+                  }).then(() => {
+                    console.log("Navigation to Register successful");
+                  }).catch(error => {
+                    console.error("Navigation to Register failed:", error);
+                  });
     }
   }
 }

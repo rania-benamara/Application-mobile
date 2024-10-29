@@ -40,8 +40,15 @@
 
 <script>
 import { openUrl } from '@nativescript/core/utils';
+import Menu from './Menu.vue'
+import { Frame } from '@nativescript/core'
 
 export default {
+  name: "NousContacter",
+
+  components: {
+         Menu
+   },
   data() {
     return {
       phoneNumber: '+1 450-435-4080',
@@ -62,6 +69,18 @@ export default {
     },
     openWhatsApp() {
       openUrl(`intent://send?phone=${this.whatsappLink}#Intent;scheme=smsto;package=com.whatsapp;action=android.intent.action.SENDTO;end`);
+    },
+
+    openDrawer() {
+         if (this.$refs.drawer && this.$refs.drawer.nativeView) {
+              this.$refs.drawer.nativeView.showDrawer();
+         }
+    },
+    onMenuTap(item) {
+          console.log(`Menu item tapped: ${item}`);
+          if (this.$refs.drawer && this.$refs.drawer.nativeView) {
+             this.$refs.drawer.nativeView.closeDrawer();
+    }
     }
   }
 }

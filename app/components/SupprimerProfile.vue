@@ -1,5 +1,5 @@
 <template>
-  <Page>
+  <Page actionBarHidden="true">
     <ActionBar title="Supprimer mon compte" class="action-bar" />
     <StackLayout class="confirmation-container">
       <Label text="Êtes-vous sûr de vouloir supprimer votre compte ?" class="confirmation-title" />
@@ -7,7 +7,7 @@
 
       <StackLayout class="button-container">
         <Button text="Oui" class="confirm-button" @tap="loginlink" />
-        <Button text="Annuler" class="cancel-button" @tap="accueillink" />
+        <Button text="Annuler" class="cancel-button" @tap="goBack" />
       </StackLayout>
     </StackLayout>
   </Page>
@@ -16,9 +16,14 @@
 <script>
 import Login from './Login'
 import Accueil from './Accueil'
+import { Frame } from '@nativescript/core';
 
 export default {
+  name: "SupprimerProfile",
   methods: {
+   goBack() {
+        this.$navigateBack(); // Retour à la page précédente
+      },
   loginlink() {
           this.$navigateTo(Login);
   },

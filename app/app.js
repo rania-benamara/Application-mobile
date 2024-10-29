@@ -18,6 +18,11 @@ import Search from './components/Search';
 import Livraison from './components/Livraison';
 import AddLivraison from './components/AddLivraison';
 import AfficherDetails from './components/AfficherDetails';
+import RadSideDrawer from 'nativescript-ui-sidedrawer/vue'
+
+
+
+
 
 // Enable Vue logging
 Vue.config.silent = false;
@@ -43,6 +48,9 @@ Vue.component('Search', Search);
 Vue.component('Livraison', Livraison);
 Vue.component('AddLivraison', AddLivraison);
 Vue.component('AfficherDetails', AfficherDetails);
+
+
+Vue.use(RadSideDrawer)
 
 new Vue({
   render: h => h('frame', [h(Login)])
