@@ -52,7 +52,13 @@
 </template>
 
 <script>
+import Menu from './Menu.vue'
+import { Frame } from '@nativescript/core'
 export default {
+  name: "Profile",
+   components: {
+          Menu
+      },
   data() {
     return {
       fullName: 'Tiana Saris', // Nom par défaut
@@ -67,7 +73,19 @@ export default {
     },
     onSaveTap() {
       // Logique pour enregistrer les modifications
-    }
+    },
+
+    openDrawer() {
+                if (this.$refs.drawer && this.$refs.drawer.nativeView) {
+                    this.$refs.drawer.nativeView.showDrawer();
+                }
+            },
+            onMenuTap(item) {
+                console.log(`Menu item tapped: ${item}`);
+                if (this.$refs.drawer && this.$refs.drawer.nativeView) {
+                    this.$refs.drawer.nativeView.closeDrawer();
+                }
+            }
   }
 };
 </script>

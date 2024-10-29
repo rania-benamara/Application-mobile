@@ -1,5 +1,5 @@
 <template>
-  <Page>
+  <Page actionBarHidden="true">
     <ActionBar title="Modifier Mot de Passe" />
 
     <ScrollView>
@@ -14,21 +14,27 @@
         <TextField hint="Confirm mot de passe" secure="true" class="inputField" color="white" hintColor="white" />
 
         <!-- Submit Button -->
-        <Button text="Soumettre" class="submitButton" @tap="onSubmit" />
+        <Button text="Soumettre" class="submitButton" @tap="goBack" />
+         <Button text="Annuler" class="cancelButton" @tap="goBack" />
       </StackLayout>
     </ScrollView>
   </Page>
 </template>
 
 <script>
+import { Frame } from '@nativescript/core';
+
 export default {
-  name: "EditPassword",
+  name: "ChangeMotpasse",
   methods: {
     onSubmit() {
       // Handle the submit action here
       console.log("Password change submitted");
     },
-  },
+    goBack() {
+          this.$navigateBack(); // Retour à la page précédente
+        },
+  }
 };
 </script>
 
@@ -59,5 +65,16 @@ export default {
   color: white;
   border-radius: 5px;
   text-align: center;
+}
+
+.cancelButton {
+    width: 80%;
+      padding: 10px;
+      background-color: #808080;
+      color: white;
+      border-radius: 5px;
+      text-align: center;
+      margin-top:15px;
+      margin-top:15px;
 }
 </style>

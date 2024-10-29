@@ -36,6 +36,7 @@
 
 <script>
 export default {
+  name:"Offres",
   data() {
     return {
       favoriteProducts: [
