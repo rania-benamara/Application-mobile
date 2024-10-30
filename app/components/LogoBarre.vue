@@ -44,6 +44,12 @@ export default {
                         this.$navigateTo(module.default);
                     }).catch(err => console.error("Failed to load Panier:", err));
                     break;
+                case 'Favoris':
+                    import('./ProductFav.vue').then(module => {
+                          this.$navigateTo(module.default);
+                    }).catch(err => console.error("Failed to load Favoris:", err));
+                    break;
+
                 default:
                     console.log(`Navigate to ${page} - Not implemented`);
             }
