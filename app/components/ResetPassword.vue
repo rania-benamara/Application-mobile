@@ -24,7 +24,7 @@
               <Image :src="showConfirmPassword ? '~/images/Hide.png' : '~/images/show.png'" @tap="toggleConfirmPasswordVisibility" class="visibility-icon" col="1" />
             </GridLayout>
           </StackLayout>
-          <Button text="Suivant" @tap="onSubmit" class="submit-button" />
+          <Button text="Suivant" @tap="goLogin" class="submit-button" />
         </StackLayout>
       </ScrollView>
     </StackLayout>
@@ -32,7 +32,10 @@
 </template>
 
 <script>
+import Login from './Login.vue';
+
 export default {
+  name: "ResetPassword",
   data() {
     return {
       newPassword: '',
@@ -54,6 +57,19 @@ export default {
     },
     toggleConfirmPasswordVisibility() {
       this.showConfirmPassword = !this.showConfirmPassword;
+    },
+
+    goLogin() {
+      console.log("Attempting to navigate to Register");
+                        this.$navigateTo(Login, {
+                          transition: {
+                            name: "slide"
+                          }
+                        }).then(() => {
+                          console.log("Navigation to Register successful");
+                        }).catch(error => {
+                          console.error("Navigation to Register failed:", error);
+                        });
     }
   }
 }

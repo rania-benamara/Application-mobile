@@ -9,10 +9,8 @@
           <Label text="Nous Contacter" col="1" row="0" class="page-title" />
         </GridLayout>
       </StackLayout>
-
       <!-- Underline -->
       <StackLayout row="1" class="underline"></StackLayout>
-
       <!-- Contact Information -->
       <ScrollView row="2">
         <StackLayout class="contact-info">
@@ -22,14 +20,12 @@
             <Label :text="phoneNumber" row="0" col="1" class="contact-text" />
             <StackLayout row="1" colSpan="2" class="item-underline"></StackLayout>
           </GridLayout>
-
           <!-- Email -->
           <GridLayout rows="auto, auto" columns="auto, *" class="contact-item" @tap="sendEmail">
             <Image src="~/images/emailICon.png" row="0" col="0" class="contact-icon" />
             <Label :text="emailAddress" row="0" col="1" class="contact-text" />
             <StackLayout row="1" colSpan="2" class="item-underline"></StackLayout>
           </GridLayout>
-
           <!-- WhatsApp -->
           <GridLayout rows="auto, auto" columns="auto, *" class="contact-item" @tap="openWhatsApp">
             <Image src="~/images/whatsAppIcon.png" row="0" col="0" class="contact-icon" />
@@ -43,9 +39,16 @@
 </template>
 
 <script>
-import { openUrl, isAndroid, isIOS } from '@nativescript/core/utils';
+import { openUrl } from '@nativescript/core/utils';
+import Menu from './Menu.vue'
+import { Frame } from '@nativescript/core'
 
 export default {
+  name: "NousContacter",
+
+  components: {
+         Menu
+   },
   data() {
     return {
       phoneNumber: '+1 450-435-4080',
@@ -65,13 +68,19 @@ export default {
       openUrl(`mailto:${this.emailAddress}`);
     },
     openWhatsApp() {
-      if (isAndroid) {
-        openUrl(`intent://send?phone=${this.whatsappLink}#Intent;scheme=smsto;package=com.whatsapp;action=android.intent.action.SENDTO;end`);
-      } else if (isIOS) {
-        openUrl(`whatsapp://send?phone=${this.whatsappLink}`);
-      } else {
-        openUrl(this.whatsappLink);
-      }
+      openUrl(`intent://send?phone=${this.whatsappLink}#Intent;scheme=smsto;package=com.whatsapp;action=android.intent.action.SENDTO;end`);
+    },
+
+    openDrawer() {
+         if (this.$refs.drawer && this.$refs.drawer.nativeView) {
+              this.$refs.drawer.nativeView.showDrawer();
+         }
+    },
+    onMenuTap(item) {
+          console.log(`Menu item tapped: ${item}`);
+          if (this.$refs.drawer && this.$refs.drawer.nativeView) {
+             this.$refs.drawer.nativeView.closeDrawer();
+    }
     }
   }
 }
