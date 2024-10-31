@@ -6,6 +6,10 @@
 
             <!-- Text Fields -->
             <StackLayout class="text-field-container">
+                   <TextField hint="Prénom" required="true" class="input-field" />
+             </StackLayout>
+
+            <StackLayout class="text-field-container">
                 <TextField hint="Nom" required="true" class="input-field" />
             </StackLayout>
             <StackLayout class="text-field-container">
