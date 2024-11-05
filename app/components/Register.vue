@@ -6,27 +6,27 @@
 
             <!-- Text Fields -->
             <StackLayout class="text-field-container">
-                   <TextField hint="Prénom" required="true" class="input-field" />
+                   <TextField v-model="prenom" hint="Prénom" required="true" class="input-field" />
              </StackLayout>
 
             <StackLayout class="text-field-container">
-                <TextField hint="Nom" required="true" class="input-field" />
+                <TextField v-model="nom" hint="Nom" required="true" class="input-field" />
             </StackLayout>
             <StackLayout class="text-field-container">
-                <TextField hint="Téléphone" required="true" keyboardType="phone" class="input-field" />
+                <TextField v-model="telephone" hint="Téléphone" required="true" keyboardType="phone" class="input-field" />
             </StackLayout>
             <StackLayout class="text-field-container">
-                <TextField hint="Email" required="true" keyboardType="email" class="input-field" />
+                <TextField  v-model="email" hint="Email" required="true" keyboardType="email" class="input-field" />
             </StackLayout>
             <StackLayout class="text-field-container">
-                <TextField hint="Mot de passe" required="true" secure="true" class="input-field" />
+                <TextField v-model="password" hint="Mot de passe" required="true" secure="true" class="input-field" />
             </StackLayout>
             <StackLayout class="text-field-container">
-                <TextField hint="JJ / MM / AAAA" required="true" keyboardType="datetime" class="input-field" />
+                <TextField v-model="date_naissance" hint="JJ / MM / AAAA" required="true" keyboardType="datetime" class="input-field" />
             </StackLayout>
 
             <!-- Create Button -->
-            <Button text="Créer" class="create-button" @tap="loginlink" />
+            <Button text="Créer" class="create-button" @tap="registerUser" />
 
             <!-- Footer -->
             <Label class="footer" text="Vous avez déjà un compte ? " />
@@ -37,16 +37,66 @@
 
 <script>
 import Login from './Login.vue';
+import { Buffer } from 'buffer';
+import { Http } from "@nativescript/core"; // Importer le module HTTP
 
 export default {
     data() {
         return {
-            mot_de_passe: '',
+            prenom: '',
+            nom: '',
+            email: '',
+            telephone: '',
+            password: '',
+            date_naissance: '',
         };
     },
     methods: {
+        async registerUser() {
+            // Vérification des champs vides
+            if (!this.prenom || !this.nom || !this.telephone || !this.email || !this.password || !this.date_naissance) {
+                alert('Veuillez remplir tous les champs.');
+                return;
+            }
+
+            // Préparer les données à envoyer
+            const dataToSend = {
+                prenom: this.prenom,
+                nom: this.nom,
+                email: this.email,
+                telephone: this.telephone,
+                password: this.password,
+                date_naissance: this.date_naissance,
+            };
+
+            try {
+                // Utiliser Http pour envoyer la requête
+                const response = await Http.request({
+                    url: 'http://10.0.2.2:3000/Clients/register', // URL de votre API
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    content: JSON.stringify(dataToSend), // Convertir les données en JSON
+                });
+
+                // Vérification du statut de la réponse
+                if (response.statusCode !== 200) {
+                    alert(response.content.toString()); // Affiche l'erreur reçue de l'API
+                    return;
+                }
+
+                const data = response.content.toJSON();
+
+                // Afficher un message de succès ou naviguer
+                alert(data.message); // Affiche le message de réussite
+                this.loginlink(); // Naviguer vers la page de connexion
+
+            } catch (error) {
+                alert('Erreur lors de l\'inscription: ' + error); // Message d'erreur générique
+            }
+        },
         loginlink() {
-            console.log("Attempting to navigate back to Login");
             this.$navigateTo(Login, {
                 transition: { name: "slide", duration: 380, curve: "easeIn" },
                 clearHistory: true
@@ -54,7 +104,9 @@ export default {
         }
     }
 };
+
 </script>
+
 
 <style scoped>
 .container {
