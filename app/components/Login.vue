@@ -44,7 +44,7 @@ import Accueil from './Accueil.vue';
 import Register from './Register.vue';
 import ForgotPassword from './ForgotPassword.vue';
 
-// Replace with your computer's IP address
+// Replace with your computer's IP addresse
 const API_URL = 'http://10.0.2.2:3000';
 
 export default {

@@ -80,7 +80,7 @@ export default {
                     content: JSON.stringify(dataToSend), // Convertir les données en JSON
                 });
 
-                // Vérification du statut de la réponse
+                // Vérification du statut de la réponses
                 if (response.statusCode !== 200) {
                     alert(response.content.toString()); // Affiche l'erreur reçue de l'API
                     return;
