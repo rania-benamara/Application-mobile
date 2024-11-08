@@ -1,117 +1,106 @@
 <template>
- <Page actionBarHidden="true">
- <ActionBar title="" class="action-bar" />
- <StackLayout class="login-container">
- <Image src="~/images/logo.png" class="logo" />
-
- <Label text="Identifiez-vous" class="login-title" />
- <Label text="Bon retour" class="subtitle" />
- <Label text="Vous nous avez manqué" class="subtitle" />
-
- <TextField v-model="email"
- hint="E-mail, Nom d'utilisateur"
- class="input-field"
- keyboardType="email" />
- <TextField v-model="password"
- hint="Mot de passe"
- secure="true"
- class="input-field" />
-
- <Label v-if="errorMessage" :text="errorMessage" class="error-message" />
-
- <Label text="Mot de passe oublié ?"
- class="forgot-password"
- @tap="goForgotPwd"/>
-
- <Button text="Se connecter"
- class="login-button"
- @tap="login"
- :isEnabled="!isLoading"/>
-
- <ActivityIndicator v-if="isLoading" :busy="true" />
-
- <Label text="Vous n'avez pas de compte ?" class="register-text" />
- <Label text="Inscrivez-vous maintenant"
- class="register-link"
- @tap="registerlink" />
- </StackLayout>
- </Page>
+    <Page actionBarHidden="true">
+        <ActionBar title="" class="action-bar" />
+        <StackLayout class="login-container">
+            <Image src="~/images/logo.png" class="logo" />
+            <Label text="Identifiez-vous" class="login-title" />
+            <Label text="Bon retour" class="subtitle" />
+            <Label text="Vous nous avez manqué" class="subtitle" />
+            <TextField v-model="email" hint="E-mail, Nom d'utilisateur" class="input-field" keyboardType="email" />
+            <TextField v-model="password" hint="Mot de passe" secure="true" class="input-field" />
+            <Label v-if="errorMessage" :text="errorMessage" class="error-message" />
+            <Label text="Mot de passe oublié ?" class="forgot-password" @tap="goForgotPwd"/>
+            <Button text="Se connecter" class="login-button" @tap="login" :isEnabled="!isLoading"/>
+            <ActivityIndicator v-if="isLoading" :busy="true" />
+            <Label text="Vous n'avez pas de compte ?" class="register-text" />
+            <Label text="Inscrivez-vous maintenant" class="register-link" @tap="registerlink" />
+        </StackLayout>
+    </Page>
 </template>
 
 <script>
-import { Http } from '@nativescript/core';
+import { Http, ApplicationSettings } from '@nativescript/core';
 import Accueil from './Accueil.vue';
 import Register from './Register.vue';
 import ForgotPassword from './ForgotPassword.vue';
 
-// Replace with your computer's IP addresse
-const API_URL = 'http://10.0.2.2:3000';
+const API_URL = 'http://10.0.2.2:3000/Clients';
 
 export default {
- data() {
- return {
- email: '',
- password: '',
- isLoading: false,
- errorMessage: ''
- };
- },
- methods: {
- async login() {
- if (!this.email || !this.password) {
- this.errorMessage = "Veuillez remplir tous les champs";
- return;
- }
+    data() {
+        return {
+            email: '',
+            password: '',
+            isLoading: false,
+            errorMessage: ''
+        };
+    },
+    methods: {
+        async login() {
+            if (!this.email || !this.password) {
+                this.errorMessage = "Veuillez remplir tous les champs";
+                return;
+            }
 
- try {
- this.isLoading = true;
- this.errorMessage = '';
+            try {
+                this.isLoading = true;
+                this.errorMessage = '';
 
- const response = await Http.request({
- url: `${API_URL}/Clients/login`,
- method: "POST",
- headers: {
- "Content-Type": "application/json"
- },
- content: JSON.stringify({
- email: this.email,
- password: this.password
- })
- });
+                console.log('Attempting login with:', { email: this.email });
 
- const result = response.content.toJSON();
- console.log('Login response:', result);
+                const response = await Http.request({
+                    url: `${API_URL}/login`,
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    content: JSON.stringify({
+                        email: this.email,
+                        password: this.password
+                    })
+                });
 
- if (result && result.token) {
- await this.$navigateTo(Accueil, {
- clearHistory: true,
- transition: { name: "fade" }
- });
- } else {
- this.errorMessage = result.message || "Erreur de connexion";
- }
- } catch (error) {
- console.error('Login error:', error);
- this.errorMessage = "Une erreur est survenue lors de la connexion";
- } finally {
- this.isLoading = false;
- }
- },
+                const result = response.content.toJSON();
+                console.log('Login response:', result);
 
- registerlink() {
- this.$navigateTo(Register, {
- transition: { name: "slide" }
- });
- },
+                if (result && result.token) {
+                    ApplicationSettings.setString('token', result.token);
+                    const storedToken = ApplicationSettings.getString('token', '');
+                    console.log('Stored token:', storedToken);
 
- goForgotPwd() {
- this.$navigateTo(ForgotPassword, {
- transition: { name: "slide" }
- });
- }
- }
+                    // Decode and log token content
+                    const tokenParts = storedToken.split('.');
+                    const payload = JSON.parse(atob(tokenParts[1]));
+                    console.log('Token payload:', payload);
+
+                    await this.$navigateTo(Accueil, {
+                        clearHistory: true,
+                        transition: { name: "fade" }
+                    });
+                } else {
+                    this.errorMessage = result.message || "Erreur de connexion";
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                this.errorMessage = "Une erreur est survenue lors de la connexion";
+            } finally {
+                this.isLoading = false;
+            }
+        },
+
+        registerlink() {
+            this.$navigateTo(Register, {
+                transition: { name: "slide" }
+            });
+        },
+
+        goForgotPwd() {
+            this.$navigateTo(ForgotPassword, {
+                transition: { name: "slide" }
+            });
+        }
+    }
 };
 </script>
+
 
 <style scoped>
 .login-container {
