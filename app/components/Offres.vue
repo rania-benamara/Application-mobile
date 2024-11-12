@@ -34,50 +34,58 @@
   </Page>
 </template>
 
+
 <script>
+import { Http } from '@nativescript/core';
+
+const API_URL = 'http://10.0.2.2:3000/Offres/';  // Remplacez par l'URL de votre API
+
 export default {
-  name:"Offres",
+  name: "Offres",
   data() {
     return {
-      favoriteProducts: [
-        {
-          name: "American Cookies",
-          category: "Cookies",
-          originalPrice: "$20.00",
-          currentPrice: "$8.00",
-          image: "~/images/cookies.png"
-        },
-        {
-          name: "Muffin bleuets",
-          category: "Cup Cake",
-          originalPrice: "$22.00",
-          currentPrice: "$9.00",
-          image: "~/images/muffin.png"
-        },
-        {
-          name: "Forêt noire",
-          category: "Donut",
-          originalPrice: "$25.00",
-          currentPrice: "$10.00",
-          image: "~/images/foretNoire.png"
-        },
-        {
-          name: "Cheesecake",
-          category: "Donut",
-          originalPrice: "$18.00",
-          currentPrice: "$8.00",
-          image: "~/images/cheesecake.png"
-        }
-      ]
+      favoriteProducts: []  // Liste des produits à remplir avec les données API
     };
   },
   methods: {
     goBack() {
       this.$navigateBack();
+    },
+
+    async fetchProducts() {
+      try {
+        const response = await Http.request({
+          url: API_URL,
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
+
+        const data = response.content.toJSON();
+
+        if (data && Array.isArray(data)) {
+          this.favoriteProducts = data.map(product => ({
+            name: product.name,
+            category: product.categories,  // Adaptation pour plusieurs catégories
+            originalPrice: `$${product.regular_price}`,
+            currentPrice: `$${product.sale_price}`,
+            image: product.image  // Assurez-vous que l'URL de l'image soit accessible
+          }));
+        } else {
+          console.log('Aucun produit trouvé');
+        }
+      } catch (error) {
+        console.error("Erreur de récupération des produits", error);
+      }
     }
+  },
+  created() {
+    this.fetchProducts();  // Récupérer les produits au moment de la création du composant
   }
 };
 </script>
+
 
 <style scoped>
 /* Couleur utilisée */
