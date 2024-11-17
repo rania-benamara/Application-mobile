@@ -6,17 +6,17 @@
       </StackLayout>
       <StackLayout row="1">
         <Label text="Mot de passe oublié" class="main-title" />
-        <Label text="Réinitialisez le mot de passe de votre compte" textWrap="true" class="subtitle" />
+        <Label text="Veuillez entrer le code de vérification" textWrap="true" class="subtitle" />
 
         <StackLayout class="input-field">
-          <Label text="Email" class="input-label" />
-          <TextField v-model="email" hint="Entrez votre email" keyboardType="email" autocorrect="false" autocapitalizationType="none" class="input" />
+          <Label text="Code vérification" class="input-label" />
+          <TextField v-model="verificationCode" hint="Entrez le numéro de vérification" keyboardType="number" autocorrect="false" autocapitalizationType="none" class="input" />
 
           <!-- Message d'erreur -->
           <Label v-if="errorMessage" :text="errorMessage" class="error-message" />
         </StackLayout>
 
-        <Button text="Suivant" @tap="submitForgotPassword" class="submit-button" />
+        <Button text="Envoyer" @tap="verifyCode" class="submit-button" />
       </StackLayout>
     </GridLayout>
   </Page>
@@ -24,33 +24,26 @@
 
 <script>
 import { Http, ApplicationSettings } from '@nativescript/core';
-import CodeEnvoye from './CodeEnvoye.vue';
-const API_URL = 'http://10.0.2.2:3000/Clients/forgot-password';
+import ResetPassword from './ResetPassword.vue'; // La page vers laquelle vous souhaitez rediriger
+const API_URL = 'http://10.0.2.2:3000/Clients/verify-code';
 
 export default {
     data() {
         return {
-            email: '',
+            verificationCode: '',
             isLoading: false,
             errorMessage: ''
         };
     },
     methods: {
-        async submitForgotPassword() {
-            // Validation de l'email
-            if (!this.email) {
-                this.errorMessage = "Veuillez entrer une adresse e-mail valide.";
+        async verifyCode() {
+            // Vérification si le code est vide
+            if (!this.verificationCode) {
+                this.errorMessage = "Veuillez entrer le code de vérification.";
                 return;
             }
 
-            // Expression régulière pour valider l'email
-            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-            if (!emailPattern.test(this.email)) {
-                this.errorMessage = "L'email est incorrect. Veuillez entrer un email valide.";
-                return;
-            }
-
-            // Réinitialiser le message d'erreur si l'email est valide
+            // Réinitialiser le message d'erreur si le code est valide
             this.errorMessage = '';
             this.isLoading = true;
 
@@ -58,21 +51,20 @@ export default {
                 const response = await fetch(API_URL, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email: this.email }),
+                    body: JSON.stringify({ verificationCode: this.verificationCode }),
                 });
 
                 const result = await response.json();
                 if (response.status === 200) {
-                    // Redirection vers la page "CodeEnvoye"
-                    this.$navigateTo(CodeEnvoye, {
+                    // Redirection vers la page "ResetPassword" si le code est correct
+                    this.$navigateTo(ResetPassword, {
                         transition: { name: "slide" },
-                        context: { email: this.email }
                     });
                 } else {
-                    this.errorMessage = result.message || "Une erreur est survenue.";
+                    this.errorMessage = result.message || "Code de vérification incorrect.";
                 }
             } catch (error) {
-                console.error("Erreur d'envoi du code :", error);
+                console.error("Erreur de vérification du code :", error);
                 this.errorMessage = "Une erreur est survenue. Veuillez réessayer.";
             } finally {
                 this.isLoading = false;
