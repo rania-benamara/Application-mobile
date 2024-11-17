@@ -1,4 +1,3 @@
-<!-- components/ForgotPassword.vue -->
 <template>
   <Page actionBarHidden="true">
     <StackLayout class="page-content">
@@ -9,7 +8,9 @@
         <StackLayout>
           <Label text="Créer un nouveau" class="main-title" />
           <Label text="mot de passe" class="main-title" />
-          <Label text="Entrer votre nouveau mote de passe" textWrap="true" class="subtitle" />
+          <Label text="Entrer votre nouveau mot de passe" textWrap="true" class="subtitle" />
+
+          <!-- Nouveau mot de passe -->
           <StackLayout class="input-field">
             <Label text="Nouveau mot de passe" class="input-label" />
             <GridLayout columns="*, auto" class="input-container">
@@ -17,6 +18,8 @@
               <Image :src="showNewPassword ? '~/images/Hide.png' : '~/images/show.png'" @tap="toggleNewPasswordVisibility" class="visibility-icon" col="1" />
             </GridLayout>
           </StackLayout>
+
+          <!-- Confirmer mot de passe -->
           <StackLayout class="input-field">
             <Label text="Confirmer mot de passe" class="input-label" />
             <GridLayout columns="*, auto" class="input-container">
@@ -24,7 +27,11 @@
               <Image :src="showConfirmPassword ? '~/images/Hide.png' : '~/images/show.png'" @tap="toggleConfirmPasswordVisibility" class="visibility-icon" col="1" />
             </GridLayout>
           </StackLayout>
-          <Button text="Suivant" @tap="goLogin" class="submit-button" />
+
+          <!-- Message d'erreur -->
+          <Label v-if="errorMessage" :text="errorMessage" class="error-message" />
+
+          <Button text="Suivant" @tap="resetPassword" class="submit-button" />
         </StackLayout>
       </ScrollView>
     </StackLayout>
@@ -32,47 +39,63 @@
 </template>
 
 <script>
-import Login from './Login.vue';
+import { Http } from '@nativescript/core';
+import Login from './Login.vue';  // Assurez-vous que Login.vue est bien référencé.
+
+const API_URL = 'http://10.0.2.2:3000/Clients/reset-password';
 
 export default {
-  name: "ResetPassword",
   data() {
     return {
       newPassword: '',
       confirmPassword: '',
       showNewPassword: false,
-      showConfirmPassword: false
-    }
+      showConfirmPassword: false,
+      errorMessage: '', // Message d'erreur vide au début
+    };
   },
   methods: {
-    onSubmit() {
-      console.log('New Password:', this.newPassword);
-      console.log('Confirm Password:', this.confirmPassword);
-    },
-    goBack() {
-      this.$navigateBack();
-    },
     toggleNewPasswordVisibility() {
       this.showNewPassword = !this.showNewPassword;
     },
     toggleConfirmPasswordVisibility() {
       this.showConfirmPassword = !this.showConfirmPassword;
     },
+    async resetPassword() {
+      // Vérification si les mots de passe correspondent
+      if (this.newPassword !== this.confirmPassword) {
+        this.errorMessage = "Les mots de passe ne correspondent pas."; // Affiche l'erreur si les mots de passe sont différents
+        return;
+      }
 
-    goLogin() {
-      console.log("Attempting to navigate to Register");
-                        this.$navigateTo(Login, {
-                          transition: {
-                            name: "slide"
-                          }
-                        }).then(() => {
-                          console.log("Navigation to Register successful");
-                        }).catch(error => {
-                          console.error("Navigation to Register failed:", error);
-                        });
-    }
-  }
-}
+      // Réinitialiser le message d'erreur si les mots de passe sont valides
+      this.errorMessage = '';
+
+      try {
+        const response = await Http.request({
+          url: API_URL,
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          content: JSON.stringify({ newPassword: this.newPassword, confirmPassword: this.confirmPassword }),
+        });
+
+        const result = response.content.toJSON();
+        if (response.statusCode === 200) {
+          // Rediriger vers la page de connexion après la mise à jour du mot de passe
+          this.$navigateTo(Login, { transition: { name: "slide" } });
+        } else {
+          this.errorMessage = result.message || "Une erreur est survenue lors de la mise à jour.";
+        }
+      } catch (error) {
+        console.error("Erreur lors de la réinitialisation du mot de passe :", error);
+        this.errorMessage = "Une erreur est survenue. Veuillez réessayer.";
+      }
+    },
+    goBack() {
+      this.$navigateBack();
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -146,5 +169,11 @@ export default {
   padding: 15 10;
   border-radius: 5;
   margin: 20 20 0 20;
+}
+.error-message {
+  font-size: 14;
+  color: red;
+  margin-top: 10;
+  text-align: center;
 }
 </style>
