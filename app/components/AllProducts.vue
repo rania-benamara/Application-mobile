@@ -193,7 +193,7 @@ export default {
  console.log('Products processed:', this.products.length);
  } catch (error) {
  console.error('Error fetching products:', error);
- this.errorMessage = "Erreur lors du chargement des produits";
+ this.errorMessage = "Erreur lors du chargement des produitss";
  } finally {
  this.isLoading = false;
  }

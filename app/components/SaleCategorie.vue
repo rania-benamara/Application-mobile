@@ -112,7 +112,7 @@ export default {
         if (!token) {
           alert({
             title: "Non authentifié",
-            message: "Veuillez vous connecter avant d'ajouter des produits au panier.",
+            message: "Veuillez vous connecter avant d'ajouter des produits au panier..",
             okButtonText: "OK"
           });
           return;

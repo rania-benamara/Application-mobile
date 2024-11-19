@@ -65,7 +65,7 @@ export default {
       email: '',
       phone: '',
       address: '',
-      errorMessage: '', // Pour afficher les erreurs s'il y en a
+      errorMessage: '', // Pour afficher les erreurs s'il y en ae
       successMessage: '' // Pour afficher le succès de l'enregistrement
     };
   },
