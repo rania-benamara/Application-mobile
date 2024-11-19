@@ -18,6 +18,7 @@ import Search from './components/Search';
 import Livraison from './components/Livraison';
 import AddLivraison from './components/AddLivraison';
 import AfficherDetails from './components/AfficherDetails';
+import CommanedPersonaliser from './components/CommanedPersonaliser';
 import RadSideDrawer from 'nativescript-ui-sidedrawer/vue'
 
 
@@ -48,6 +49,8 @@ Vue.component('Search', Search);
 Vue.component('Livraison', Livraison);
 Vue.component('AddLivraison', AddLivraison);
 Vue.component('AfficherDetails', AfficherDetails);
+Vue.component('CommanedPersonaliser',CommanedPersonaliser);
+
 
 
 Vue.use(RadSideDrawer)
