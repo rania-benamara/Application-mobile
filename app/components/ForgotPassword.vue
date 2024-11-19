@@ -6,33 +6,29 @@
                        class="go-back-icon"
                        @tap="goBack" />
             </StackLayout>
-
             <StackLayout row="1">
                 <Label text="Mot de passe oublié"
                        class="main-title" />
                 <Label text="Réinitialisez le mot de passe de votre compte"
                        textWrap="true"
                        class="subtitle" />
-
                 <StackLayout class="input-field">
-                    <Label text="Email ou nom d'utilisateur"
+                    <Label text="Email"
                            class="input-label" />
                     <TextField v-model="email"
-                             hint="Entrez votre email ou nom d'utilisateur"
-                             autocorrect="false"
-                             autocapitalizationType="none"
-                             class="input" />
+                              hint="Entrez votre email"
+                              keyboardType="email"
+                              autocorrect="false"
+                              autocapitalizationType="none"
+                              class="input" />
                 </StackLayout>
-
                 <Label v-if="errorMessage"
                        :text="errorMessage"
                        class="error-message" />
-
                 <Button text="Suivant"
-                        @tap="onSubmit"
+                        @tap="submitForgotPassword"
                         class="submit-button"
                         :isEnabled="!isLoading" />
-
                 <ActivityIndicator v-if="isLoading"
                                  :busy="true"
                                  class="activity-indicator" />
@@ -43,68 +39,60 @@
 
 <script>
 import { Http } from '@nativescript/core';
-import ResetPassword from './ResetPassword.vue';
+import CodeEnvoye from './CodeEnvoye.vue';
 
-const API_URL = 'http://10.0.2.2:3000/Clients';
+const API_URL = 'http://10.0.2.2:3000/Clients/forgot-password';
 
 export default {
     name: "ForgotPassword",
     data() {
         return {
             email: '',
-            errorMessage: '',
-            isLoading: false
-        }
+            isLoading: false,
+            errorMessage: ''
+        };
     },
     methods: {
-        async onSubmit() {
+        async submitForgotPassword() {
+            // Validation de l'email
+            if (!this.email) {
+                this.errorMessage = "Veuillez entrer une adresse e-mail valide.";
+                return;
+            }
+
+            // Expression régulière pour valider l'email
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+            if (!emailPattern.test(this.email)) {
+                this.errorMessage = "L'email est incorrect. Veuillez entrer un email valide.";
+                return;
+            }
+
+            this.errorMessage = '';
+            this.isLoading = true;
+
             try {
-                this.errorMessage = '';
-
-                if (!this.email) {
-                    this.errorMessage = "Veuillez entrer votre email ou nom d'utilisateur";
-                    return;
-                }
-
-                this.isLoading = true;
-
-                console.log('Sending request to:', `${API_URL}/forgot-password`);
-                console.log('With data:', { email: this.email });
-
                 const response = await Http.request({
-                    url: `${API_URL}/forgot-password`,
+                    url: API_URL,
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    content: JSON.stringify({
-                        email: this.email
-                    })
+                    headers: { "Content-Type": "application/json" },
+                    content: JSON.stringify({ email: this.email })
                 });
 
-                console.log('Raw response:', response.content.toString());
-
-                try {
-                    const result = response.content.toJSON();
-                    console.log('Parsed response:', result);
-
-                    if (response.statusCode === 200 && result.userId) {
-                        this.$navigateTo(ResetPassword, {
-                            props: {
-                                userId: result.userId
-                            },
-                            transition: { name: "slide" }
-                        });
-                    } else {
-                        throw new Error(result.message || "Erreur inattendue");
-                    }
-                } catch (parseError) {
-                    console.error('Error parsing response:', parseError);
-                    throw new Error("Erreur de communication avec le serveur");
+                const result = response.content.toJSON();
+                
+                if (response.statusCode === 200) {
+                    this.$navigateTo(CodeEnvoye, {
+                        transition: { name: "slide" },
+                        props: { 
+                            email: this.email
+                        }
+                    });
+                } else {
+                    this.errorMessage = result.message || "Une erreur est survenue.";
                 }
             } catch (error) {
-                console.error('Full error:', error);
-                this.errorMessage = error.message || "Une erreur est survenue";
+                console.error("Erreur d'envoi:", error);
+                this.errorMessage = "Une erreur est survenue. Veuillez réessayer.";
             } finally {
                 this.isLoading = false;
             }
@@ -114,27 +102,24 @@ export default {
             this.$navigateBack();
         }
     }
-}
+};
 </script>
 
 <style scoped>
 .page-content {
     padding: 0;
 }
-
 .top-container {
     padding-top: 20;
     padding-left: 20;
     height: 60;
 }
-
 .go-back-icon {
     width: 40;
     height: 40;
     vertical-align: top;
     horizontal-align: left;
 }
-
 .main-title {
     font-size: 28;
     font-weight: 600;
@@ -143,7 +128,6 @@ export default {
     color: #1F2C37;
     text-align: center;
 }
-
 .subtitle {
     font-size: 14;
     color: #9CA4AB;
@@ -152,20 +136,17 @@ export default {
     text-align: center;
     padding: 0 20;
 }
-
 .input-field {
     margin-bottom: 20;
     background-color: #ffffff;
     padding: 0 20;
 }
-
 .input-label {
     font-size: 14;
     margin-bottom: 5;
     font-weight: 600;
     color: #1F2C37;
 }
-
 .input {
     font-size: 16;
     padding: 10;
@@ -175,14 +156,12 @@ export default {
     font-weight: 500;
     height: 60;
 }
-
 .error-message {
     color: red;
     text-align: center;
     margin: 10 20;
     font-size: 14;
 }
-
 .submit-button {
     background-color: #010035;
     color: white;
@@ -192,11 +171,9 @@ export default {
     border-radius: 5;
     margin: 60 20 0 20;
 }
-
 .submit-button:disabled {
     opacity: 0.5;
 }
-
 .activity-indicator {
     margin-top: 20;
 }

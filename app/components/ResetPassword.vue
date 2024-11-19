@@ -6,7 +6,6 @@
                        class="go-back-icon"
                        @tap="goBack" />
             </StackLayout>
-
             <ScrollView>
                 <StackLayout>
                     <Label text="Créer un nouveau" class="main-title" />
@@ -14,12 +13,13 @@
                     <Label text="Entrer votre nouveau mot de passe"
                            textWrap="true"
                            class="subtitle" />
-
+                    
                     <!-- Error Message -->
                     <Label v-if="errorMessage"
                            :text="errorMessage"
                            class="error-message" />
 
+                    <!-- Nouveau mot de passe -->
                     <StackLayout class="input-field">
                         <Label text="Nouveau mot de passe" class="input-label" />
                         <GridLayout columns="*, auto" class="input-container">
@@ -37,6 +37,7 @@
                         </GridLayout>
                     </StackLayout>
 
+                    <!-- Confirmer mot de passe -->
                     <StackLayout class="input-field">
                         <Label text="Confirmer mot de passe" class="input-label" />
                         <GridLayout columns="*, auto" class="input-container">
@@ -58,7 +59,6 @@
                             @tap="onSubmit"
                             class="submit-button"
                             :isEnabled="!isLoading" />
-
                     <ActivityIndicator v-if="isLoading"
                                      :busy="true"
                                      class="activity-indicator" />
@@ -72,7 +72,7 @@
 import { Http } from '@nativescript/core';
 import Login from './Login.vue';
 
-const API_URL = 'http://10.0.2.2:3000/Clients';
+const API_URL = 'http://10.0.2.2:3000/Clients/reset-password';
 
 export default {
     name: "ResetPassword",
@@ -96,27 +96,27 @@ export default {
         async onSubmit() {
             try {
                 this.errorMessage = '';
-
+                
                 // Validation
                 if (!this.newPassword || !this.confirmPassword) {
                     this.errorMessage = "Veuillez remplir tous les champs";
                     return;
                 }
-
+                
                 if (this.newPassword !== this.confirmPassword) {
                     this.errorMessage = "Les mots de passe ne correspondent pas";
                     return;
                 }
-
+                
                 if (this.newPassword.length < 4) {
                     this.errorMessage = "Le mot de passe doit contenir au moins 4 caractères";
                     return;
                 }
 
                 this.isLoading = true;
-
+                
                 const response = await Http.request({
-                    url: `${API_URL}/reset-password`,
+                    url: API_URL,
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     content: JSON.stringify({
@@ -127,8 +127,7 @@ export default {
                 });
 
                 const result = response.content.toJSON();
-                console.log('Response:', result);
-
+                
                 if (response.statusCode === 200) {
                     alert({
                         title: "Succès",
@@ -150,17 +149,17 @@ export default {
                 this.isLoading = false;
             }
         },
-
-        goBack() {
-            this.$navigateBack();
-        },
-
+        
         toggleNewPasswordVisibility() {
             this.showNewPassword = !this.showNewPassword;
         },
-
+        
         toggleConfirmPasswordVisibility() {
             this.showConfirmPassword = !this.showConfirmPassword;
+        },
+        
+        goBack() {
+            this.$navigateBack();
         }
     }
 }
@@ -170,20 +169,17 @@ export default {
 .page-content {
     padding: 0;
 }
-
 .top-container {
     padding-top: 20;
     padding-left: 20;
     height: 60;
 }
-
 .go-back-icon {
     width: 40;
     height: 40;
     vertical-align: top;
     horizontal-align: left;
 }
-
 .main-title {
     font-size: 28;
     font-weight: 600;
@@ -192,7 +188,6 @@ export default {
     color: #1F2C37;
     text-align: center;
 }
-
 .subtitle {
     font-size: 14;
     color: #9CA4AB;
@@ -201,26 +196,22 @@ export default {
     text-align: center;
     padding: 0 20;
 }
-
 .input-field {
     margin-bottom: 20;
     padding: 0 20;
 }
-
 .input-label {
     font-size: 14;
     margin-bottom: 5;
     font-weight: 600;
     color: #1F2C37;
 }
-
 .input-container {
     border-width: 2;
     border-color: #ECF1F6;
     border-radius: 20;
     height: 60;
 }
-
 .input {
     font-size: 16;
     padding: 10;
@@ -231,14 +222,12 @@ export default {
     background-color: transparent;
     placeholder-color: #9CA4AB;
 }
-
 .visibility-icon {
     width: 24;
     height: 24;
     vertical-align: center;
     margin-right: 10;
 }
-
 .submit-button {
     background-color: #010035;
     color: white;
@@ -248,18 +237,15 @@ export default {
     border-radius: 5;
     margin: 20 20 0 20;
 }
-
 .submit-button:disabled {
     opacity: 0.5;
 }
-
 .error-message {
     color: red;
     text-align: center;
     margin: 10 20;
     font-size: 14;
 }
-
 .activity-indicator {
     margin-top: 20;
 }

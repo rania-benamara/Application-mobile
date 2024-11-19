@@ -19,11 +19,8 @@ import Livraison from './components/Livraison';
 import AddLivraison from './components/AddLivraison';
 import AfficherDetails from './components/AfficherDetails';
 import CommanedPersonaliser from './components/CommanedPersonaliser';
+import CodeEnvoye from './components/CodeEnvoye';
 import RadSideDrawer from 'nativescript-ui-sidedrawer/vue'
-
-
-
-
 
 // Enable Vue logging
 Vue.config.silent = false;
@@ -49,12 +46,11 @@ Vue.component('Search', Search);
 Vue.component('Livraison', Livraison);
 Vue.component('AddLivraison', AddLivraison);
 Vue.component('AfficherDetails', AfficherDetails);
-Vue.component('CommanedPersonaliser',CommanedPersonaliser);
+Vue.component('CommanedPersonaliser', CommanedPersonaliser);
+Vue.component('CodeEnvoye', CodeEnvoye);
 
-
-
-Vue.use(RadSideDrawer)
+Vue.use(RadSideDrawer);
 
 new Vue({
-  render: h => h('frame', [h(Login)])
+    render: h => h('frame', [h(Login)])
 }).$start();
