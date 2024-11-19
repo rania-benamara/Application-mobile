@@ -81,7 +81,6 @@
     </Page>
 </template>
 
-
 <script>
 import Menu from './Menu.vue'
 import NavBar from './LogoBarre.vue'
@@ -92,7 +91,8 @@ import Profile from './Profile.vue'
 import AddLivraison from './AddLivraison.vue'
 import NousContacter from './NousContacter.vue'
 import Parametre from './Parametre.vue'
-
+import { Http } from '@nativescript/core'
+import { ApplicationSettings } from '@nativescript/core'
 
 export default {
     name: 'Panier',
@@ -103,106 +103,128 @@ export default {
     data() {
         return {
             isDrawerOpen: false,
-            favoriteProducts: [
-                { name: "American Cookies", category: "Cookies", originalPrice: "$20.00", image: "~/images/4.png" },
-                { name: "American Cookies", category: "Cookies", originalPrice: "$20.00", image: "~/images/7.png" },
-                { name: "American Cookies", category: "Cookies", originalPrice: "$20.00", image: "~/images/7.png" },
-                { name: "American Cookies", category: "Cookies", originalPrice: "$20.00", image: "~/images/7.png" },
-                { name: "American Cookies", category: "Cookies", originalPrice: "$20.00", image: "~/images/7.png" },
-                { name: "American Cookies", category: "Cookies", originalPrice: "$20.00", image: "~/images/7.png" },
-                { name: "American Cookies", category: "Cookies", originalPrice: "$20.00", image: "~/images/7.png" }
-            ]
+            favoriteProducts: [] // Tableau des produits du panier récupérés depuis l'API
         }
     },
+    mounted() {
+        this.getProductsInCart(); // Appel de l'API lors du montage du composant
+    },
     methods: {
+        // Ouvrir le menu
         openDrawer() {
             if (this.$refs.drawer && this.$refs.drawer.nativeView) {
                 this.$refs.drawer.nativeView.showDrawer();
             }
         },
+
+        // Récupérer les produits dans le panier via l'API
+        async getProductsInCart() {
+            try {
+                const response = await Http.request({
+                    url: 'http://10.0.2.2:3000/Clients/panier', // Remplacez par l'URL de votre API
+                    method: 'GET',
+                    headers: {
+                        "Authorization": `Bearer ${ApplicationSettings.getString('token')}`
+                    }
+                });
+                const products = response.content.toJSON();
+
+                if (Array.isArray(products) && products.length > 0) {
+                    // Remplir favoriteProducts avec les produits récupérés
+                    this.favoriteProducts = products.map(product => ({
+                        name: product.name,
+                        category: product.categories ? product.categories.split(',')[0] : 'Inconnue', // Prendre la première catégorie
+                        originalPrice: `$${product.price}`, // Format du prix
+                        image: product.image_url || "~/images/default.png" // Image du produit, avec une image par défaut si elle est absente
+                    }));
+                } else {
+                    console.log("Aucun produit trouvé dans le panier.");
+                }
+            } catch (error) {
+                console.error("Erreur lors de la récupération des produits du panier:", error);
+            }
+        },
+
+        // Gérer les éléments du menu
         onMenuTap(item) {
             console.log(`Menu item tapped: ${item}`);
             if (this.$refs.drawer && this.$refs.drawer.nativeView) {
                 this.$refs.drawer.nativeView.closeDrawer();
             }
-            // Handle menu item navigation
-            switch(item) {
-                                    case 'Mes commandes':
-                                        this.$navigateTo(MesCommandes, {
-                                            transition: {
-                                                name: "fade"
-                                            }
-                                        }).then(() => {
-                                            console.log("Navigation to MesCommandes successful");
-                                        }).catch(error => {
-                                            console.error("Navigation to MesCommandes failed:", error);
-                                        });
-                                        break;
-                                    case 'Mon profile':
-                                        this.$navigateTo(Profile, {
-                                                  transition: {
-                                                     name: "fade"
-                                                   }
-                                        }).then(() => {
-                                                   console.log("Navigation to MesCommandes successful");
-                                        }).catch(error => {
-                                                  console.error("Navigation to MesCommandes failed:", error);
-                                        });
-                                        break;
-                                    case 'Adresse de livraison':
-                                         this.$navigateTo(AddLivraison, {
-                                              transition: {
-                                                name: "fade"
-                                               }
-                                         }).then(() => {
-                                                console.log("Navigation to MesCommandes successful");
-                                          }).catch(error => {
-                                                 console.error("Navigation to MesCommandes failed:", error);
-                                           });
-                                        break;
-                                    case 'Nous contacter':
-                                        this.$navigateTo(NousContacter, {
-                                               transition: {
-                                                  name: "fade"
-                                                }
-
-                                                }).then(() => {
-                                                   console.log("Navigation to MesCommandes successful");
-                                                 }).catch(error => {
-                                                    console.error("Navigation to MesCommandes failed:", error);
-                                                 });
-                                        break;
-                                    case 'Paramètres':
-                                        this.$navigateTo(Parametre, {
-                                               transition: {
-                                                   name: "fade"
-                                                }
-
-                                        }).then(() => {
-                                                 console.log("Navigation to MesCommandes successful");
-                                        }).catch(error => {
-                                                  console.error("Navigation to MesCommandes failed:", error);
-                                        });
-
-                                        break;
-                                    case 'Se déconnecter':
-                                        this.$navigateTo(Login, {
-                                              transition: {
-                                                name: "fade"
-                                        }
-
-                                         }).then(() => {
-                                                console.log("Navigation to MesCommandes successful");
-                                         }).catch(error => {
-                                                 console.error("Navigation to MesCommandes failed:", error);
-                                         });
-
-                                        break;
-                        }
+            // Navigation vers les pages
+            switch (item) {
+                case 'Panier':
+                    this.$navigateTo(Panier, {
+                        transition: { name: "fade" }
+                    }).then(() => {
+                        console.log("Navigation vers Panier réussie");
+                    }).catch(error => {
+                        console.error("Navigation vers Panier échouée:", error);
+                    });
+                    break;
+                case 'Mes commandes':
+                    this.$navigateTo(MesCommandes, {
+                        transition: { name: "fade" }
+                    }).then(() => {
+                        console.log("Navigation vers MesCommandes réussie");
+                    }).catch(error => {
+                        console.error("Navigation vers MesCommandes échouée:", error);
+                    });
+                    break;
+                case 'Mon profile':
+                    this.$navigateTo(Profile, {
+                        transition: { name: "fade" }
+                    }).then(() => {
+                        console.log("Navigation vers Profile réussie");
+                    }).catch(error => {
+                        console.error("Navigation vers Profile échouée:", error);
+                    });
+                    break;
+                case 'Adresse de livraison':
+                    this.$navigateTo(AddLivraison, {
+                        transition: { name: "fade" }
+                    }).then(() => {
+                        console.log("Navigation vers AddLivraison réussie");
+                    }).catch(error => {
+                        console.error("Navigation vers AddLivraison échouée:", error);
+                    });
+                    break;
+                case 'Nous contacter':
+                    this.$navigateTo(NousContacter, {
+                        transition: { name: "fade" }
+                    }).then(() => {
+                        console.log("Navigation vers NousContacter réussie");
+                    }).catch(error => {
+                        console.error("Navigation vers NousContacter échouée:", error);
+                    });
+                    break;
+                case 'Paramètres':
+                    this.$navigateTo(Parametre, {
+                        transition: { name: "fade" }
+                    }).then(() => {
+                        console.log("Navigation vers Parametre réussie");
+                    }).catch(error => {
+                        console.error("Navigation vers Parametre échouée:", error);
+                    });
+                    break;
+                case 'Se déconnecter':
+                    this.$navigateTo(Login, {
+                        transition: { name: "fade" }
+                    }).then(() => {
+                        console.log("Navigation vers Login réussie");
+                    }).catch(error => {
+                        console.error("Navigation vers Login échouée:", error);
+                    });
+                    break;
+            }
         },
+
+        // Lien de connexion
         loginlink() {
             this.$navigateTo(Login);
         },
+
+        // Retour en arrière
         goBack() {
             console.log("Go back tapped");
             const frame = Frame.topmost();

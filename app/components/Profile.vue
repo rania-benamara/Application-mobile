@@ -50,45 +50,162 @@
     </GridLayout>
   </Page>
 </template>
-
 <script>
-import Menu from './Menu.vue'
-import { Frame } from '@nativescript/core'
+import Menu from './Menu.vue';
+import { ApplicationSettings } from '@nativescript/core';
+
 export default {
   name: "Profile",
-   components: {
-          Menu
-      },
+  components: {
+    Menu
+  },
   data() {
     return {
-      fullName: 'Tiana Saris', // Nom par défaut
-      email: 'BrooklynSimmons@gmail.com',
-      phone: '+1 3712 3789',
-      address: ''
+      fullName: '',
+      email: '',
+      phone: '',
+      address: '',
+      errorMessage: '', // Pour afficher les erreurs s'il y en a
+      successMessage: '' // Pour afficher le succès de l'enregistrement
     };
   },
   methods: {
     goBack() {
       this.$navigateBack(); // Fonction pour revenir à la page précédente
     },
-    onSaveTap() {
-      // Logique pour enregistrer les modifications
+    async onSaveTap() {
+      console.log("Enregistrer les modifications");
+
+      // Vérification si les champs sont remplis avant d'envoyer la requête
+      if (!this.fullName || !this.email || !this.phone || !this.address) {
+        this.errorMessage = "Tous les champs doivent être remplis.";
+        return;
+      }
+
+      // Vérification du format de l'adresse
+const addressPattern = /^\d+\s+[a-zA-Z\s]+(?:\s+app\d+)?\s+[A-Za-z]\d[A-Za-z]\s?\d[A-Za-z]\d\s+[a-zA-Z\s]+$/;
+
+      if (!addressPattern.test(this.address)) {
+        alert("Veuillez entrer une adresse au format suivant :\n\n- '40 NomRue AppNum H1E 4B9 Ville Province'\n- ou \n'40 NomRue H1E 4B9 Ville Province'");
+        this.errorMessage = "Format d'adresse incorrect.";
+        return;
+      }
+
+      try {
+        // Récupérer le token pour l'authentification
+        const token = this.getToken();
+        if (!token) {
+          this.errorMessage = "Token non valide. Veuillez vérifier votre connexion.";
+          console.error("Token manquant");
+          return;
+        }
+
+        // Préparer les données à envoyer, en gardant nom_complet et adresse en entier
+        const updatedProfile = {
+          nom_complet: this.fullName,   // Envoyer le nom complet
+          email: this.email,
+          telephone: this.phone,
+          adresse: this.address          // Envoyer l'adresse complète
+        };
+
+        // Effectuer la requête PUT pour mettre à jour le profil
+        const response = await fetch("http://10.0.2.2:3000/Clients/profile", {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(updatedProfile)
+        });
+
+        console.log("Réponse brute:", response);
+
+        if (!response.ok) {
+          this.errorMessage = `Erreur HTTP: ${response.status}`;
+          console.error("Erreur HTTP:", response.status, response.statusText);
+          return;
+        }
+
+        const data = await response.json();
+        console.log("Réponse serveur:", data);
+        // Afficher une alerte de succès
+              alert("Les modifications ont été enregistrées avec succès !");
+
+        if (data && data.message === "Profil mis à jour avec succès") {
+          this.successMessage = "Profil mis à jour avec succès!";
+          this.errorMessage = ''; // Réinitialiser les erreurs
+        } else {
+          this.errorMessage = "Une erreur est survenue lors de la mise à jour du profil.";
+        }
+
+      } catch (error) {
+        console.error("Erreur lors de l'enregistrement des données :", error.message);
+        this.errorMessage = "Une erreur est survenue lors de l'enregistrement.";
+      }
     },
 
-    openDrawer() {
-                if (this.$refs.drawer && this.$refs.drawer.nativeView) {
-                    this.$refs.drawer.nativeView.showDrawer();
-                }
-            },
-            onMenuTap(item) {
-                console.log(`Menu item tapped: ${item}`);
-                if (this.$refs.drawer && this.$refs.drawer.nativeView) {
-                    this.$refs.drawer.nativeView.closeDrawer();
-                }
-            }
+    async fetchUserProfile() {
+      console.log("Début de fetchUserProfile");
+      try {
+        // Récupérer le token
+        const token = this.getToken();
+        if (!token) {
+          this.errorMessage = "Token non valide. Veuillez vérifier votre connexion.";
+          console.error("Token manquant");
+          return; // Sortie si le token n'est pas valide
+        }
+
+        console.log("Token utilisé :", token);
+
+        // Effectuer la requête GET pour récupérer le profil
+        const response = await fetch("http://10.0.2.2:3000/Clients/profile", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`, // Utilisation du token dans les en-têtes
+          },
+        });
+
+        console.log("Réponse brute:", response);
+
+        if (!response.ok) {
+          this.errorMessage = `Erreur HTTP: ${response.status}`;
+          console.error("Erreur HTTP:", response.status, response.statusText);
+          return;
+        }
+
+        const data = await response.json();
+        console.log("Données reçues :", data);
+
+        // Vérification des données reçues
+        if (data) {
+          this.fullName = data.nom_complet || '';  // Nom complet de l'utilisateur
+          this.email = data.email || '';            // Email de l'utilisateur
+          this.phone = data.telephone || '';        // Téléphone de l'utilisateur
+          this.address = data.adresse || '';        // Adresse de l'utilisateur
+        } else {
+          this.errorMessage = "Aucune donnée disponible.";
+        }
+
+      } catch (error) {
+        console.error("Erreur lors de la récupération des données :", error.message);
+        this.errorMessage = "Une erreur est survenue lors de la récupération des données.";
+      }
+    },
+    getToken() {
+      // Récupérer le token stocké dans ApplicationSettings
+      const token = ApplicationSettings.getString('token');
+      console.log("Récupération du token:", token);
+      return token;
+    }
+  },
+  mounted() {
+    console.log("Montage du composant profil");
+    this.fetchUserProfile(); // Appel de la fonction pour récupérer les données du profil dès que le composant est monté
   }
 };
 </script>
+
+
 
 <style scoped>
 /* ActionBar */
@@ -175,3 +292,4 @@ export default {
   align-self: center; /* Centrer le bouton horizontalement */
 }
 </style>
+

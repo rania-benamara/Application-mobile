@@ -58,16 +58,10 @@
 </template>
 
 <script>
-import Menu from './Menu.vue'
-import NavBar from './LogoBarre.vue'
-import MesCommandes from './MesCommandes.vue'
-import { Frame, alert } from '@nativescript/core'
-import Profile from './Profile.vue'
-import AddLivraison from './AddLivraison.vue'
-import NousContacter from './NousContacter.vue'
-import Parametre from './Parametre.vue'
-import Login from './Login.vue'
-import AfficherDetails from './AfficherDetails.vue'
+import { Http, ApplicationSettings, alert } from '@nativescript/core';
+import Menu from './Menu.vue';
+import NavBar from './LogoBarre.vue';
+import AfficherDetails from './AfficherDetails.vue';
 
 export default {
   name: 'SaleCategorie',
@@ -81,6 +75,7 @@ export default {
     return {
       products: [
         {
+          id: 1,
           name: "Chocolate Chip",
           category: "Cookies",
           price: 19.99,
@@ -91,6 +86,7 @@ export default {
           quantity: 1
         },
         {
+          id: 2,
           name: "Oatmeal Raisin",
           category: "Cookies",
           price: 24.99,
@@ -102,12 +98,57 @@ export default {
         }
       ],
       cart: []
-    }
+    };
   },
 
   methods: {
     formatPrice(price) {
       return `$${price.toFixed(2)}`;
+    },
+
+    async addToCart(product) {
+      try {
+        const token = ApplicationSettings.getString('token');
+        if (!token) {
+          alert({
+            title: "Non authentifié",
+            message: "Veuillez vous connecter avant d'ajouter des produits au panier.",
+            okButtonText: "OK"
+          });
+          return;
+        }
+
+        const response = await Http.request({
+          url: 'http://10.0.2.2:3000/Clients/ajouter-au-panier',
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          content: JSON.stringify({
+            product_id: product.id,
+            quantity: 1
+          })
+        });
+
+        const result = response.content.toJSON();
+        if (result && result.success) {
+          alert({
+            title: "Succès",
+            message: `${product.name} a été ajouté au panier`,
+            okButtonText: "OK"
+          });
+        } else {
+          throw new Error(result?.message || 'Erreur lors de l\'ajout au panier');
+        }
+      } catch (error) {
+        console.error('Erreur:', error);
+        alert({
+          title: "Erreur",
+          message: "Une erreur est survenue lors de l'ajout au panier.",
+          okButtonText: "OK"
+        });
+      }
     },
 
     showProductDetails(product) {
@@ -126,57 +167,6 @@ export default {
       });
     },
 
-    addToCart(product) {
-      const existingProduct = this.cart.find(item => item.name === product.name);
-
-      if (existingProduct) {
-        existingProduct.quantity += 1;
-      } else {
-        this.cart.push({
-          ...product,
-          quantity: 1
-        });
-      }
-
-      alert({
-        title: "Succès",
-        message: `${product.name} a été ajouté au panier`,
-        okButtonText: "OK"
-      });
-
-      console.log('Cart:', this.cart);
-    },
-
-    openDrawer() {
-      if (this.$refs.drawer && this.$refs.drawer.nativeView) {
-        this.$refs.drawer.nativeView.showDrawer();
-      }
-    },
-
-    onMenuTap(item) {
-      if (this.$refs.drawer && this.$refs.drawer.nativeView) {
-        this.$refs.drawer.nativeView.closeDrawer();
-      }
-
-      const navigationMap = {
-        'Mes commandes': MesCommandes,
-        'Mon profile': Profile,
-        'Adresse de livraison': AddLivraison,
-        'Nous contacter': NousContacter,
-        'Paramètres': Parametre,
-        'Se déconnecter': Login
-      };
-
-      const component = navigationMap[item];
-      if (component) {
-        this.$navigateTo(component, {
-          transition: { name: "fade" }
-        }).catch(error => {
-          console.error(`Navigation to ${item} failed:`, error);
-        });
-      }
-    },
-
     toggleFavorite(index) {
       this.products[index].isFavorite = !this.products[index].isFavorite;
     },
@@ -188,7 +178,7 @@ export default {
       }
     }
   }
-}
+};
 </script>
 
 <style scoped>
