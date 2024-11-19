@@ -41,7 +41,7 @@
 <script>
 import { Http } from '@nativescript/core';
 import Login from './Login.vue';  // Assurez-vous que Login.vue est bien référencé.
-
+//url
 const API_URL = 'http://10.0.2.2:3000/Clients/reset-password';
 
 export default {
