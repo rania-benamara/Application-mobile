@@ -224,7 +224,7 @@ export default {
             this.$navigateTo(Login);
         },
 
-        // Retour en arrière
+        // Retour en arrièrec
         goBack() {
             console.log("Go back tapped");
             const frame = Frame.topmost();
