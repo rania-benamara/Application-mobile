@@ -305,3 +305,4 @@ export default {
   font-weight: 700;
 }
 </style>
+
