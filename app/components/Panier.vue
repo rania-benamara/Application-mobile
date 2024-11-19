@@ -219,7 +219,7 @@ export default {
             }
         },
 
-        // Lien de connexionf
+        // Lien de connexion
         loginlink() {
             this.$navigateTo(Login);
         },

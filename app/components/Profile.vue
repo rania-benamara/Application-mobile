@@ -69,6 +69,7 @@ export default {
       successMessage: '' // Pour afficher le succès de l'enregistrement
     };
   },
+  //f
   methods: {
     goBack() {
       this.$navigateBack(); // Fonction pour revenir à la page précédente
