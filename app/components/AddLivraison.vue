@@ -15,8 +15,8 @@
                     </StackLayout>
 
                     <StackLayout class="champ-texte-conteneur">
-                        <TextField v-model="address.rue"
-                                hint="Rue"
+                        <TextField v-model="address.numero_nom_rue"
+                                hint="numero_nom_rue"
                                 required="true"
                                 class="input-field" />
                     </StackLayout>
@@ -64,7 +64,7 @@ export default {
         return {
             address: {
                 numero_appartement: '',
-                rue: '',
+                numero_nom_rue: '',
                 ville: '',
                 province: '',
                 code_postal: ''
@@ -100,7 +100,7 @@ export default {
             }
 
             // Validate fields
-            if (!this.address.numero_appartement || !this.address.rue ||
+            if (!this.address.numero_appartement || !this.address.numero_nom_rue ||
                 !this.address.ville || !this.address.province ||
                 !this.address.code_postal) {
                 alert('Veuillez remplir tous les champs!');
@@ -118,7 +118,7 @@ export default {
 
             const requestData = {
                 numero_appartement: this.address.numero_appartement,
-                rue: this.address.rue,
+                numero_nom_rue: this.address.numero_nom_rue,
                 ville: this.address.ville,
                 province: this.address.province,
                 code_postal: this.address.code_postal

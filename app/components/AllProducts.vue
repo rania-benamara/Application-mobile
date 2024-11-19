@@ -71,7 +71,7 @@ import AfficherDetails from './AfficherDetails.vue'
 
 export default {
   name: 'AllProducts',
-
+//f
   components: {
     Menu: () => import('./Menu.vue'),
     NavBar: () => import('./LogoBarre.vue')
@@ -305,3 +305,4 @@ export default {
   font-weight: 700;
 }
 </style>
+
