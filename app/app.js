@@ -19,6 +19,9 @@ import Livraison from './components/Livraison';
 import AddLivraison from './components/AddLivraison';
 import AfficherDetails from './components/AfficherDetails';
 import RadSideDrawer from 'nativescript-ui-sidedrawer/vue'
+import ConfirmationPage from './components/ConfirmationPage';
+import CommandeEchouee from './components/CommandeEchouee';
+import wait from './components/wait';
 
 
 
@@ -48,6 +51,9 @@ Vue.component('Search', Search);
 Vue.component('Livraison', Livraison);
 Vue.component('AddLivraison', AddLivraison);
 Vue.component('AfficherDetails', AfficherDetails);
+Vue.component('ConfirmationPage', ConfirmationPage);
+Vue.component('CommandeEchouee', CommandeEchouee);
+Vue.component('wait', wait);
 
 
 Vue.use(RadSideDrawer)
