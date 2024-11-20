@@ -129,7 +129,7 @@
 </template>
 
 <script>
-import { Http } from '@nativescript/core';
+import { Http, ApplicationSettings } from '@nativescript/core';
 import { Frame, alert } from '@nativescript/core';
 import Menu from './Menu.vue';
 import NavBar from './LogoBarre.vue';
@@ -282,27 +282,50 @@ export default {
  },
 
  async addToCart(product) {
- try {
- const existingProduct = this.cart.find(item => item.id === product.id);
- if (existingProduct) {
- existingProduct.quantity++;
- } else {
- this.cart.push({ ...product, quantity: 1 });
- }
- alert({
- title: "Succès",
- message: `${product.name} ajouté au panier`,
- okButtonText: "OK"
- });
- } catch (error) {
- console.error('Error adding to cart:', error);
- alert({
- title: "Erreur",
- message: "Erreur lors de l'ajout au panier",
- okButtonText: "OK"
- });
- }
- },
+          try {
+            const token = ApplicationSettings.getString('token');
+            if (!token) {
+              alert({
+                title: "Non authentifié",
+                message: "Veuillez vous connecter avant d'ajouter des produits au panier.",
+                okButtonText: "OK"
+              });
+              return;
+            }
+            const response = await Http.request({
+                url: 'http://10.0.2.2:3000/Clients/ajouter-au-panier',
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                content: JSON.stringify({
+                    product_id: product.id,
+                    quantity: 1
+                })
+            });
+            let result;
+            try {
+                result = response.content.toJSON();
+            } catch (parseError) {
+                console.error('Response parsing error:', parseError);
+                throw new Error('Réponse du serveur non valide.');
+            }
+            console.log("Parsed result:", result); // Ajoutez ce log avant le if pour vérifier le contenu de result
+            if (result && result.success) {
+                alert({
+                    title: "Succès",
+                    message: `${product.name} ajouté au panier`,
+                    okButtonText: "OK"
+                });
+            } else {
+                throw new Error(result?.message || 'Erreur lors de l\'ajout au panier');
+            }
+          } catch (error) {
+            alert({ title: "Succès", message: error.message || "Une erreur inattendue s'est produite", okButtonText: "OK"
+            });
+          }
+        },
 
  showProductDetails(product) {
  this.$navigateTo(AfficherDetails, {

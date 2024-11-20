@@ -123,7 +123,7 @@
 </template>
 
 <script>
-import { Http } from '@nativescript/core';
+import { Http,ApplicationSettings } from '@nativescript/core';
 import { Frame, alert } from '@nativescript/core';
 import Menu from './Menu.vue';
 import NavBar from './LogoBarre.vue';
@@ -256,10 +256,7 @@ export default {
                throw new Error(result?.message || 'Erreur lors de l\'ajout au panier');
            }
          } catch (error) {
-           alert({
-                           title: "Succès",
-                           message: `${product.name} ajouté au panier`,
-                           okButtonText: "OK"
+           alert({ title: "Succès", message: error.message || "Une erreur inattendue s'est produite", okButtonText: "OK"
            });
          }
        },
@@ -307,41 +304,30 @@ export default {
     return `${parseFloat(price).toFixed(2)}$`;
     },
 
-    async addToCart(product) {
-    try {
-    const existingProduct = this.cart.find(item => item.id === product.id);
-    if (existingProduct) {
-    existingProduct.quantity++;
-    } else {
-    this.cart.push({ ...product, quantity: 1 });
-    }
-    alert({
-    title: "Succès",
-    message: `${product.name} ajouté au panier`,
-    okButtonText: "OK"
-    });
-    } catch (error) {
-    console.error('Error adding to cart:', error);
-    alert({
-    title: "Erreur",
-    message: "Erreur lors de l'ajout au panier",
-    okButtonText: "OK"
-    });
-    }
-    },
+    //async addToCart(product) {
+    //try {
+    //const existingProduct = this.cart.find(item => item.id === product.id);
+    //if (existingProduct) {
+    //existingProduct.quantity++;
+    //} else {
+   // this.cart.push({ ...product, quantity: 1 });
+   // }
+    //alert({
+   // title: "Succès",
+    //message: `${product.name} ajouté au panier`,
+    //okButtonText: "OK"
+    //});
+    //} catch (error) {
+    //console.error('Error adding to cart:', error);
+    //alert({
+    //title: "Erreur",
+    //message: "Erreur lors de l'ajout au panier",
+    //okButtonText: "OK"
+    //});
+    //}
+    //},
 
-    showProductDetails(product) {
-    this.$navigateTo(AfficherDetails, {
-    props: {
-    productId: product.id,
-    productName: product.name,
-    productDescription: product.description,
-    productImage: product.image,
-    productPrice: product.price
-    },
-    transition: { name: "fade" }
-    });
-    },
+
 
     toggleFavorite(index) {
     this.products[index].isFavorite = !this.products[index].isFavorite;

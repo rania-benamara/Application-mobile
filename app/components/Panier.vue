@@ -166,7 +166,7 @@ export default {
                     this.$navigateTo(MesCommandes, {
                         transition: { name: "fade" }
                     }).then(() => {
-                        console.log("Navigation vers MesCommandes réussie");
+                         console.log("Navigation vers MesCommandes réussie");
                     }).catch(error => {
                         console.error("Navigation vers MesCommandes échouée:", error);
                     });
