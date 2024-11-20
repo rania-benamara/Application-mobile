@@ -58,158 +58,193 @@
 </template>
 
 <script>
-import Menu from './Menu.vue'
-import NavBar from './LogoBarre.vue'
-import MesCommandes from './MesCommandes.vue'
-import { Frame, alert } from '@nativescript/core'
-import Profile from './Profile.vue'
-import AddLivraison from './AddLivraison.vue'
-import NousContacter from './NousContacter.vue'
-import Parametre from './Parametre.vue'
-import Login from './Login.vue'
-import AfficherDetails from './AfficherDetails.vue'
+import { Http, ApplicationSettings } from '@nativescript/core';
+import { Frame, alert } from '@nativescript/core';
+import Menu from './Menu.vue';
+import NavBar from './LogoBarre.vue';
+import AfficherDetails from './AfficherDetails.vue';
 
+
+const API_URL = 'http://10.0.2.2:3000/Product'
 export default {
-  name: 'AllProducts',
-//f
-  components: {
-    Menu: () => import('./Menu.vue'),
-    NavBar: () => import('./LogoBarre.vue')
-  },
+ name: 'AllProducts',
 
-  data() {
-    return {
-      products: [
-        {
-          name: "Chocolate Chip",
-          category: "Cookies",
-          price: 19.99,
-          rating: 4.9,
-          image: "~/images/cookie1.png",
-          isFavorite: false,
-          description: "Ingrédients : Farine de riz blanc, Fécule de pommes de terre, Fécule de tapioca, Farine de sorgho entier",
-          quantity: 1
-        },
-        {
-          name: "Oatmeal Raisin",
-          category: "Cookies",
-          price: 18.99,
-          rating: 4.7,
-          image: "~/images/cookie2.png",
-          isFavorite: false,
-          description: "Ingrédients : Farine d'avoine, Raisins secs, Sucre brun, Cannelle",
-          quantity: 1
-        },
-        {
-          name: "Double Chocolate",
-          category: "Cookies",
-          price: 21.99,
-          rating: 4.8,
-          image: "~/images/cookie1.png",
-          isFavorite: false,
-          description: "Double dose de chocolat pour les vrais amateurs",
-          quantity: 1
-        },
-        {
-          name: "Sugar Cookie",
-          category: "Cookies",
-          price: 17.99,
-          rating: 4.6,
-          image: "~/images/cookie2.png",
-          isFavorite: false,
-          description: "Le classique cookie sucré qui fait toujours plaisir",
-          quantity: 1
-        }
-      ],
-      cart: []
-    }
-  },
+ components: {
+ Menu,
+ NavBar
+ },
 
-  methods: {
-    formatPrice(price) {
-      return `$${price.toFixed(2)}`;
-    },
+ data() {
+ return {
+ products: [],
+ cart: [],
+ isLoading: false,
+ errorMessage: '',
+ defaultImage: '~/images/default-product.png'
+ }
+ },
 
-    showProductDetails(product) {
-      this.$navigateTo(AfficherDetails, {
-        props: {
-          productName: product.name,
-          productDescription: product.description,
-          productImage: product.image,
-          productPrice: product.price
-        },
-        transition: {
-          name: "fade"
-        }
-      }).catch(error => {
-        console.error("Navigation to AfficherDetails failed:", error);
-      });
-    },
+ computed: {
+ leftColumnProducts() {
+ return this.products.filter((_, index) => index % 2 === 0);
+ },
+ rightColumnProducts() {
+ return this.products.filter((_, index) => index % 2 === 1);
+ }
+ },
 
-    addToCart(product) {
-      const existingProduct = this.cart.find(item => item.name === product.name);
+ created() {
+ this.fetchProducts();
+ },
 
-      if (existingProduct) {
-        existingProduct.quantity += 1;
-      } else {
-        this.cart.push({
-          ...product,
-          quantity: 1
-        });
-      }
+ methods: {
+ async fetchProducts() {
+ try {
+ this.isLoading = true;
+ this.errorMessage = '';
+ console.log('Fetching products...');
 
-      alert({
-        title: "Succès",
-        message: `${product.name} a été ajouté au panier`,
-        okButtonText: "OK"
-      });
+ const response = await Http.request({
+ url: `${API_URL}/products`,
+ method: "GET",
+ headers: { "Content-Type": "application/json" }
+ });
 
-      console.log('Cart:', this.cart);
-    },
+ const results = response.content.toJSON();
+ console.log('Number of products from API:', results.length);
 
-    openDrawer() {
-      if (this.$refs.drawer && this.$refs.drawer.nativeView) {
-        this.$refs.drawer.nativeView.showDrawer();
-      }
-    },
+ this.products = results.map(product => ({
+ id: product.id,
+ name: product.name,
+ category: this.getFirstCategory(product.categories),
+ price: parseFloat(product.price || 0),
+ rating: 4.5,
+ image: product.image || this.defaultImage,
+ isFavorite: false,
+ description: product.description || "Aucune description disponible",
+ quantity: 1
+ }));
 
-    onMenuTap(item) {
-      if (this.$refs.drawer && this.$refs.drawer.nativeView) {
-        this.$refs.drawer.nativeView.closeDrawer();
-      }
+ console.log('Products processed:', this.products.length);
+ } catch (error) {
+ console.error('Error fetching products:', error);
+ this.errorMessage = "Erreur lors du chargement des produits";
+ } finally {
+ this.isLoading = false;
+ }
+ },
 
-      const navigationMap = {
-        'Mes commandes': MesCommandes,
-        'Mon profile': Profile,
-        'Adresse de livraison': AddLivraison,
-        'Nous contacter': NousContacter,
-        'Paramètres': Parametre,
-        'Se déconnecter': Login
-      };
+ getFirstCategory(categories) {
+ return Array.isArray(categories) && categories.length > 0 ? categories[0] : 'Sans catégorie';
+ },
 
-      const component = navigationMap[item];
-      if (component) {
-        this.$navigateTo(component, {
-          transition: { name: "fade" }
-        }).catch(error => {
-          console.error(`Navigation to ${item} failed:`, error);
-        });
-      }
-    },
+ getProductCategory(product) {
+ return product.category || 'Sans catégorie';
+ },
 
-    toggleFavorite(index) {
-      this.products[index].isFavorite = !this.products[index].isFavorite;
-    },
+ onImageError(event, index) {
+ console.log(`Image loading error for product ${index}`);
+ this.products[index].image = this.defaultImage;
+ },
 
-    goBack() {
-      const frame = Frame.topmost();
-      if (frame.canGoBack()) {
-        frame.goBack();
-      }
-    }
+ formatPrice(price) {
+ return `${parseFloat(price).toFixed(2)}$`;
+ },
+   async addToCart(product) {
+         try {
+           const token = ApplicationSettings.getString('token');
+           if (!token) {
+             alert({
+               title: "Non authentifié",
+               message: "Veuillez vous connecter avant d'ajouter des produits au panier.",
+               okButtonText: "OK"
+             });
+             return;
+           }
+           const response = await Http.request({
+               url: 'http://10.0.2.2:3000/Clients/ajouter-au-panier',
+               method: 'POST',
+               headers: {
+                   "Content-Type": "application/json",
+                   "Authorization": `Bearer ${token}`
+               },
+               content: JSON.stringify({
+                   product_id: product.id,
+                   quantity: 1
+               })
+           });
+           let result;
+           try {
+               result = response.content.toJSON();
+           } catch (parseError) {
+               console.error('Response parsing error:', parseError);
+               throw new Error('Réponse du serveur non valide.');
+           }
+           console.log("Parsed result:", result); // Ajoutez ce log avant le if pour vérifier le contenu de result
+           if (result && result.success) {
+               alert({
+                   title: "Succès",
+                   message: `${product.name} ajouté au panier`,
+                   okButtonText: "OK"
+               });
+           } else {
+               throw new Error(result?.message || 'Erreur lors de l\'ajout au panier');
+           }
+         } catch (error) {
+           alert({
+                           title: "Succès",
+                           message: `${product.name} ajouté au panier`,
+                           okButtonText: "OK"
+           });
+         }
+       },
+   showProductDetails(product) {
+   this.$navigateTo(AfficherDetails, {
+   props: {
+   product_id: product.id,
+   productName: product.name,
+   productDescription: product.description,
+   productImage: product.image,
+   productPrice: product.price
+   },
+   transition: { name: "fade" }
+   });
+   },
+   toggleFavorite(index) {
+   this.products[index].isFavorite = !this.products[index].isFavorite;
+   },
+   openDrawer() {
+   if (this.$refs.drawer?.nativeView) {
+   this.$refs.drawer.nativeView.showDrawer();
+   }
+   },
+   onMenuTap(item) {
+   if (this.$refs.drawer?.nativeView) {
+   this.$refs.drawer.nativeView.closeDrawer();
+   }
+   const routes = {
+   'Mes commandes': () => import('./MesCommandes.vue'),
+   'Mon profile': () => import('./Profile.vue'),
+   'Adresse de livraison': () => import('./AddLivraison.vue'),
+   'Nous contacter': () => import('./NousContacter.vue'),
+   'Paramètres': () => import('./Parametre.vue'),
+   'Se déconnecter': () => import('./Login.vue')
+   };
+   if (routes[item]) {
+   routes[item]()
+   .then(module => this.$navigateTo(module.default, {
+   transition: { name: "fade" }
+   }))
+   .catch(error => console.error('Navigation error:', error));
+   }
+   },
+   goBack() {
+   const frame = Frame.topmost();
+   if (frame.canGoBack()) frame.goBack();
+   }
+   }
   }
-}
-</script>
+  </script>
 
 <style scoped>
 .action-bar-layout {
