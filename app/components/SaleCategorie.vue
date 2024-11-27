@@ -2,7 +2,7 @@
   <Page actionBarHidden="true">
     <RadSideDrawer ref="drawer" drawerLocation="Right">
       <GridLayout ~drawerContent>
-        <Menu @menuTap="onMenuTap"/>
+        <Menu @menuTap="onMenuTap" />
       </GridLayout>
 
       <StackLayout ~mainContent>
@@ -25,9 +25,9 @@
               <!-- Left Column -->
               <StackLayout col="0" class="product-column">
                 <GridLayout v-for="(product, index) in leftColumnProducts"
-                           :key="product.id"
-                           rows="auto"
-                           class="product-item">
+                            :key="product.id"
+                            rows="auto"
+                            class="product-item">
                   <StackLayout class="product-container">
                     <!-- Image Container -->
                     <GridLayout height="120" @tap="showProductDetails(product)">
@@ -35,18 +35,18 @@
                              stretch="aspectFill"
                              class="product-image"
                              @error="onImageError($event, index)"
-                             loadMode="async"/>
+                             loadMode="async" />
                       <Label :text="formatPrice(product.price)"
-                             class="product-price"/>
+                             class="product-price" />
                     </GridLayout>
 
                     <!-- Info Container -->
                     <StackLayout class="product-info" @tap="showProductDetails(product)">
                       <Label :text="product.name"
                              class="product-name"
-                             textWrap="true"/>
+                             textWrap="true" />
                       <Label :text="getProductCategory(product)"
-                             class="product-category"/>
+                             class="product-category" />
                     </StackLayout>
 
                     <!-- Actions Container -->
@@ -54,16 +54,17 @@
                                 class="product-actions"
                                 height="40">
                       <Image :src="product.isFavorite ? '~/images/favoriteIconFilled.png' : '~/images/favoriteIcon.png'"
+                             :class="{ 'favorite-icon-red': product.isFavorite }"
                              col="0"
                              class="action-icon"
-                             @tap="toggleFavorite(index * 2)"/>
+                             @tap="toggleFavorite(product, index * 2)" />
                       <Image src="~/images/panier1.png"
                              col="1"
                              class="action-icon"
-                             @tap="addToCart(product)"/>
+                             @tap="addToCart(product)" />
                       <Label :text="product.rating.toFixed(1)"
                              col="3"
-                             class="rating"/>
+                             class="rating" />
                     </GridLayout>
                   </StackLayout>
                 </GridLayout>
@@ -72,9 +73,9 @@
               <!-- Right Column -->
               <StackLayout col="1" class="product-column">
                 <GridLayout v-for="(product, index) in rightColumnProducts"
-                           :key="product.id"
-                           rows="auto"
-                           class="product-item">
+                            :key="product.id"
+                            rows="auto"
+                            class="product-item">
                   <StackLayout class="product-container">
                     <!-- Image Container -->
                     <GridLayout height="120" @tap="showProductDetails(product)">
@@ -82,18 +83,18 @@
                              stretch="aspectFill"
                              class="product-image"
                              @error="onImageError($event, index)"
-                             loadMode="async"/>
+                             loadMode="async" />
                       <Label :text="formatPrice(product.price)"
-                             class="product-price"/>
+                             class="product-price" />
                     </GridLayout>
 
                     <!-- Info Container -->
                     <StackLayout class="product-info" @tap="showProductDetails(product)">
                       <Label :text="product.name"
                              class="product-name"
-                             textWrap="true"/>
+                             textWrap="true" />
                       <Label :text="getProductCategory(product)"
-                             class="product-category"/>
+                             class="product-category" />
                     </StackLayout>
 
                     <!-- Actions Container -->
@@ -101,16 +102,17 @@
                                 class="product-actions"
                                 height="40">
                       <Image :src="product.isFavorite ? '~/images/favoriteIconFilled.png' : '~/images/favoriteIcon.png'"
+                             :class="{ 'favorite-icon-red': product.isFavorite }"
                              col="0"
                              class="action-icon"
-                             @tap="toggleFavorite(index * 2 + 1)"/>
+                             @tap="toggleFavorite(product, index * 2 + 1)" />
                       <Image src="~/images/panier1.png"
                              col="1"
                              class="action-icon"
-                             @tap="addToCart(product)"/>
+                             @tap="addToCart(product)" />
                       <Label :text="product.rating.toFixed(1)"
                              col="3"
-                             class="rating"/>
+                             class="rating" />
                     </GridLayout>
                   </StackLayout>
                 </GridLayout>
@@ -127,17 +129,10 @@
 </template>
 
 <script>
-import { Http } from '@nativescript/core';
-import { Frame, alert } from '@nativescript/core';
+import { Http, ApplicationSettings, Frame, alert } from '@nativescript/core';
 import Menu from './Menu.vue';
 import NavBar from './LogoBarre.vue';
 import AfficherDetails from './AfficherDetails.vue';
-import MesCommandes from './MesCommandes.vue';
-import Profile from './Profile.vue';
-import AddLivraison from './AddLivraison.vue';
-import NousContacter from './NousContacter.vue';
-import Parametre from './Parametre.vue';
-import Login from './Login.vue';
 
 const API_URL = 'http://10.0.2.2:3000/Product';
 
@@ -146,13 +141,17 @@ export default {
 
   components: {
     Menu,
-    NavBar
+    NavBar,
   },
 
   props: {
     categoryName: {
       type: String,
       required: true
+    },
+    token: {
+      type: String,
+      default: () => ApplicationSettings.getString('userToken', '')
     }
   },
 
@@ -164,7 +163,7 @@ export default {
       errorMessage: '',
       defaultImage: "https://wnsansgluten.ca/wp-content/uploads/2023/07/placeholder.jpg",
       imageLoadErrors: new Set()
-    }
+    };
   },
 
   computed: {
@@ -185,8 +184,6 @@ export default {
       try {
         this.isLoading = true;
         this.errorMessage = '';
-        console.log(`Fetching products for category: ${this.categoryName}`);
-
         const response = await Http.request({
           url: `${API_URL}/category`,
           method: "POST",
@@ -195,108 +192,48 @@ export default {
         });
 
         const results = response.content.toJSON();
-        console.log('Number of products received:', results.length);
-
-        this.products = results.map(product => {
-          let imageUrl = product.guid || product.image;
-
-          // Log the initial image URL for debugging
-          console.log(`Initial image URL for ${product.name}:`, imageUrl);
-
-          // Clean up the image URL
-          if (imageUrl && typeof imageUrl === 'string') {
-            // Remove any size suffixes and query parameters
-            imageUrl = imageUrl.split('?')[0].replace(/-\d+x\d+\.(jpg|jpeg|png|gif)/, '.$1');
-            console.log(`Cleaned image URL:`, imageUrl);
-          } else {
-            imageUrl = this.defaultImage;
-            console.log(`Using default image for ${product.name}`);
-          }
-
-          return {
-            id: product.id,
-            name: product.name,
-            category: this.getFirstCategory(product.categories),
-            price: parseFloat(product.price || 0),
-            rating: 4.5,
-            image: imageUrl,
-            isFavorite: false,
-            description: product.description || "Aucune description disponible",
-            quantity: 1
-          };
-        });
-
-        console.log('Processed products:', this.products.length);
+        this.products = results.map(product => ({
+          id: product.id,
+          name: product.name,
+          category: product.category || 'Sans catégorie',
+          price: parseFloat(product.price || 0),
+          rating: 4.5,
+          image: product.guid || this.defaultImage,
+          isFavorite: false,
+          description: product.description || "Aucune description disponible",
+          quantity: 1
+        }));
       } catch (error) {
-        console.error('Error fetching category products:', error);
         this.errorMessage = "Erreur lors du chargement des produits";
       } finally {
         this.isLoading = false;
       }
     },
 
-    getImageUrl(product) {
-      if (!product.image || !this.isValidImageUrl(product.image)) {
-        console.log(`Invalid image URL for ${product.name}, using default`);
-        return this.defaultImage;
-      }
-      return product.image;
-    },
-
-    isValidImageUrl(url) {
-      if (!url || typeof url !== 'string') return false;
-      return url.match(/\.(jpg|jpeg|png|gif)$/i) !== null ||
-             url.includes('/wp-content/uploads/');
-    },
-
-    getFirstCategory(categories) {
-      if (!categories) return 'Sans catégorie';
-      if (typeof categories === 'string') {
-        const categoryArray = categories.split(',').map(cat => cat.trim());
-        return categoryArray[0] || 'Sans catégorie';
-      }
-      if (Array.isArray(categories)) {
-        return categories[0] || 'Sans catégorie';
-      }
-      return 'Sans catégorie';
-    },
-
-    getProductCategory(product) {
-      return product.category || 'Sans catégorie';
-    },
-
-    onImageError(event, index) {
-      console.log(`Image loading error for product ${index}`);
-      console.log('Failed image URL:', this.products[index]?.image);
-      if (this.products[index]) {
-        this.products[index].image = this.defaultImage;
-        this.imageLoadErrors.add(index);
-        this.products = [...this.products];
-      }
-    },
-
-    formatPrice(price) {
-      return `${parseFloat(price).toFixed(2)}$`;
-    },
-
-    async addToCart(product) {
+    async toggleFavorite(product, index) {
       try {
-        const existingProduct = this.cart.find(item => item.id === product.id);
-        if (existingProduct) {
-          existingProduct.quantity++;
-        } else {
-          this.cart.push({ ...product, quantity: 1 });
-        }
+        const isFavorite = !this.products[index].isFavorite;
+        this.products[index].isFavorite = isFavorite;
+
+        await Http.request({
+          url: `http://10.0.2.2:3000/add-favoris`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${this.token}`
+          },
+          content: JSON.stringify({ productId: product.id })
+        });
+
         alert({
           title: "Succès",
-          message: `${product.name} ajouté au panier`,
+          message: isFavorite ? `${product.name} ajouté aux favoris` : `${product.name} retiré des favoris`,
           okButtonText: "OK"
         });
       } catch (error) {
-        console.error('Error adding to cart:', error);
         alert({
           title: "Erreur",
-          message: "Erreur lors de l'ajout au panier",
+          message: "Erreur lors de la mise à jour des favoris",
           okButtonText: "OK"
         });
       }
@@ -315,45 +252,53 @@ export default {
       });
     },
 
-    toggleFavorite(index) {
-      this.products[index].isFavorite = !this.products[index].isFavorite;
+    addToCart(product) {
+      const existingProduct = this.cart.find(item => item.id === product.id);
+      if (existingProduct) {
+        existingProduct.quantity++;
+      } else {
+        this.cart.push({ ...product, quantity: 1 });
+      }
+      alert({
+        title: "Succès",
+        message: `${product.name} ajouté au panier`,
+        okButtonText: "OK"
+      });
     },
 
     openDrawer() {
-      if (this.$refs.drawer?.nativeView) {
-        this.$refs.drawer.nativeView.showDrawer();
+      this.$refs.drawer.nativeView?.showDrawer();
+    },
+
+    goBack() {
+      Frame.topmost().goBack();
+    },
+
+    getImageUrl(product) {
+      return product.image || this.defaultImage;
+    },
+
+    formatPrice(price) {
+      return `${parseFloat(price).toFixed(2)}$`;
+    },
+
+    getProductCategory(product) {
+      return product.category || 'Sans catégorie';
+    },
+
+    onImageError(event, index) {
+      if (!this.imageLoadErrors.has(index)) {
+        this.imageLoadErrors.add(index);
+        this.products[index].image = this.defaultImage;
       }
     },
 
     onMenuTap(item) {
-      if (this.$refs.drawer?.nativeView) {
-        this.$refs.drawer.nativeView.closeDrawer();
-      }
-
-      const routes = {
-        'Mes commandes': MesCommandes,
-        'Mon profile': Profile,
-        'Adresse de livraison': AddLivraison,
-        'Nous contacter': NousContacter,
-        'Paramètres': Parametre,
-        'Se déconnecter': Login
-      };
-
-      const component = routes[item];
-      if (component) {
-        this.$navigateTo(component, {
-          transition: { name: "fade" }
-        })
-        .catch(error => console.error('Navigation error:', error));
-      }
-    },
-
-    goBack() {
-      const frame = Frame.topmost();
-      if (frame.canGoBack()) frame.goBack();
+      console.log(`Menu item tapped: ${item}`);
+      // Handle menu item tap
     }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -444,6 +389,10 @@ export default {
   height: 20;
   margin: 0 8 0 0;
   vertical-align: middle;
+}
+
+.favorite-icon-red {
+  filter: invert(29%) sepia(96%) saturate(7485%) hue-rotate(357deg) brightness(100%) contrast(104%);
 }
 
 .rating {

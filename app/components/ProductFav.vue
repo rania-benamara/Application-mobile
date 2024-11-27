@@ -2,8 +2,9 @@
   <Page actionBarHidden="true">
     <RadSideDrawer ref="drawer" drawerLocation="Right">
       <GridLayout ~drawerContent>
-        <Menu @menuTap="onMenuTap"/>
+        <Menu @menuTap="onMenuTap" />
       </GridLayout>
+
       <StackLayout ~mainContent>
         <GridLayout rows="auto, *, auto">
           <!-- Header -->
@@ -12,8 +13,14 @@
             <Label text="Mes Favoris" col="0" row="1" colSpan="2" class="category-title" />
           </GridLayout>
 
+          <!-- Loading Indicator -->
+          <ActivityIndicator v-if="isLoading" :busy="true" row="1" class="activity-indicator" />
+
+          <!-- Error Message -->
+          <Label v-if="errorMessage" :text="errorMessage" row="1" class="error-message" />
+
           <!-- Products List -->
-          <ScrollView row="1">
+          <ScrollView row="1" v-if="!isLoading && !errorMessage">
             <StackLayout class="product-container">
               <GridLayout v-for="(product, index) in products"
                          :key="index"
@@ -39,9 +46,10 @@
                     <!-- Icons section -->
                     <GridLayout columns="auto, auto, *" class="rating-container">
                         <Image :src="product.isFavorite ? '~/images/favoriteIconFilled.png' : '~/images/favoriteIcon.png'"
+                               :class="{ 'favorite-icon-red': product.isFavorite }"
                                col="0"
                                class="favorite-icon"
-                               @tap="onFavoriteIconTap(index)"/>
+                               @tap="toggleFavorite(product, index)"/>
                         <Image src="~/images/panier1.png"
                                col="1"
                                class="cart-icon"
@@ -74,6 +82,7 @@ import NousContacter from './NousContacter.vue'
 import Parametre from './Parametre.vue'
 import Login from './Login.vue'
 import AfficherDetails from './AfficherDetails.vue'
+import axios from 'axios'
 
 export default {
   name: 'ProductFav',
@@ -85,50 +94,15 @@ export default {
 
   data() {
     return {
-      products: [
-        {
-          name: "Chocolate Chip",
-          category: "Cookies",
-          price: 19.99,
-          rating: 4.9,
-          image: "~/images/cookie1.png",
-          isFavorite: false,
-          description: "Ingrédients : Farine de riz blanc, Fécule de pommes de terre, Fécule de tapioca, Farine de sorgho entier",
-          quantity: 1
-        },
-        {
-          name: "Oatmeal Raisin",
-          category: "Cookies",
-          price: 18.99,
-          rating: 4.7,
-          image: "~/images/cookie2.png",
-          isFavorite: false,
-          description: "Ingrédients : Farine d'avoine, Raisins secs, Sucre brun, Cannelle",
-          quantity: 1
-        },
-        {
-          name: "Double Chocolate",
-          category: "Cookies",
-          price: 21.99,
-          rating: 4.8,
-          image: "~/images/cookie1.png",
-          isFavorite: false,
-          description: "Double dose de chocolat pour les vrais amateurs",
-          quantity: 1
-        },
-        {
-          name: "Sugar Cookie",
-          category: "Cookies",
-          price: 17.99,
-          rating: 4.6,
-          image: "~/images/cookie2.png",
-          isFavorite: false,
-          description: "Le classique cookie sucré qui fait toujours plaisir",
-          quantity: 1
-        }
-      ],
-      cart: []
+      products: [],
+      cart: [],
+      isLoading: false,
+      errorMessage: ''
     }
+  },
+
+  mounted() {
+    this.fetchFavoriteProducts();
   },
 
   methods: {
@@ -173,8 +147,38 @@ export default {
       console.log('Cart:', this.cart);
     },
 
-    onFavoriteIconTap(index) {
-      this.products[index].isFavorite = !this.products[index].isFavorite;
+    async toggleFavorite(product, index) {
+      try {
+        const isFavorite = !this.products[index].isFavorite;
+        this.products[index].isFavorite = isFavorite;
+
+        const response = await axios.post('http://10.0.2.2:3000/add-favoris', {
+          productId: product.id
+        });
+
+        console.log(response.data.message);
+
+        if (isFavorite) {
+          alert({
+            title: "Succès",
+            message: `${product.name} ajouté aux favoris`,
+            okButtonText: "OK"
+          });
+        } else {
+          alert({
+            title: "Succès",
+            message: `${product.name} retiré des favoris`,
+            okButtonText: "OK"
+          });
+        }
+      } catch (error) {
+        console.error('Error toggling favorite:', error);
+        alert({
+          title: "Erreur",
+          message: "Erreur lors de la mise à jour des favoris",
+          okButtonText: "OK"
+        });
+      }
     },
 
     openDrawer() {
@@ -211,6 +215,29 @@ export default {
       const frame = Frame.topmost();
       if (frame.canGoBack()) {
         frame.goBack();
+      }
+    },
+
+    async fetchFavoriteProducts() {
+      try {
+        this.isLoading = true;
+        this.errorMessage = '';
+        const response = await axios.get('http://10.0.2.2:3000/favoris');
+        this.products = response.data.map(product => ({
+          ...product,
+          isFavorite: true, // Assuming all fetched products are favorites
+          price: parseFloat(product.price) // Ensure price is a number
+        }));
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          console.warn('No favorite products found.');
+          this.errorMessage = "Aucun produit favori trouvé.";
+        } else {
+          console.error('Error fetching favorite products:', error);
+          this.errorMessage = "Erreur lors de la récupération des produits favoris";
+        }
+      } finally {
+        this.isLoading = false;
       }
     }
   }
@@ -296,6 +323,10 @@ export default {
   margin-right: 10;
 }
 
+.favorite-icon-red {
+  filter: invert(29%) sepia(96%) saturate(7485%) hue-rotate(357deg) brightness(100%) contrast(104%);
+}
+
 .cart-icon {
   width: 20;
   height: 20;
@@ -308,5 +339,17 @@ export default {
   color: #000000;
   font-weight: 700;
   text-align: right;
+}
+
+.error-message {
+  color: red;
+  text-align: center;
+  font-size: 14;
+  margin: 20;
+}
+
+.activity-indicator {
+  color: #FF4A4C;
+  margin: 20;
 }
 </style>
