@@ -2,7 +2,7 @@
     <Page actionBarHidden="true">
         <RadSideDrawer ref="drawer" drawerLocation="Right">
             <GridLayout ~drawerContent>
-                <Menu @menuTap="onMenuTap"/>
+                <Menu @menuTap="onMenuTap" />
             </GridLayout>
 
             <StackLayout ~mainContent>
@@ -24,9 +24,10 @@
                                     <Label :text="product.category" class="product-category" col="1" row="1" />
                                     <Label :text="product.originalPrice" class="original-price" col="1" row="2" />
                                     <StackLayout class="offer-subtitle" col="1" row="2" orientation="horizontal">
-                                        <Image src="~/images/img_1.png" class="qt-image" />
-                                        <TextField class="input-field" />
-                                        <Image src="~/images/img_2.png" class="qtt-image" />
+                                        <Image src="~/images/delete.png" class="delete-icon" @tap="deleteProduct(index)" />
+                                        <Image src="~/images/img_1.png" class="qt-image" @tap="decrementQuantity(index)" />
+                                        <TextField v-model="product.quantity" class="input-field" />
+                                        <Image src="~/images/img_2.png" class="qtt-image" @tap="incrementQuantity(index)" />
                                     </StackLayout>
                                 </GridLayout>
                             </StackLayout>
@@ -35,45 +36,25 @@
 
                     <!-- Fixed Summary Section -->
                     <StackLayout row="2" class="summary-section">
-                        <!-- Champ commentaire avec bouton -->
-                        <GridLayout columns="*, auto" class="comment-generale">
-                            <StackLayout class="comment-section" col="0">
-                                <TextField hint=" Laisser un commentaire" class="comment" />
-                            </StackLayout>
-                            <StackLayout class="bouton-section" col="1">
-                                <Button text="Envoyer" class="bouton" />
-                            </StackLayout>
-                        </GridLayout>
-
-                        <!-- Sous-total, Frais de livraison, Frais de taxe, Coût total -->
                         <GridLayout columns="*, auto" class="summary-item">
                             <Label text="Sous-total" class="summary-label" />
-                            <Label text="$92.00" class="summary-value" />
+                            <Label :text="`$${subTotal.toFixed(2)}`" class="summary-value" />
                         </GridLayout>
                         <GridLayout columns="*, auto" class="summary-item">
                             <Label text="Frais de livraison" class="summary-label" />
-                            <Label text="$0.00" class="summary-value" />
+                            <Label :text="`$${deliveryFee.toFixed(2)}`" class="summary-value" />
                         </GridLayout>
                         <GridLayout columns="*, auto" class="summary-item">
                             <Label text="Coût des taxes" class="summary-label" />
-                            <Label text="$92.00" class="summary-value" />
+                            <Label :text="`$${taxAmount.toFixed(2)}`" class="summary-value" />
                         </GridLayout>
-
-                        <!-- Ligne en pointillés -->
-                        <GridLayout columns="*" class="dotted-line">
-                            <Label text="------------------------" class="dotted-line-label" />
-                        </GridLayout>
-
                         <GridLayout columns="*, auto" class="summary-item">
                             <Label text="Coût total" class="summary-label" />
-                            <Label text="$92.00" class="summary-value" />
+                            <Label :text="`$${totalCost.toFixed(2)}`" class="summary-value" />
                         </GridLayout>
-
-                        <!-- Bouton Passer à la caisse -->
-                        <Button text="Passer à la caisse" class="checkout-button" />
+                        <Button text="Passer la commande" class="checkout-button" @tap="passerCommande" />
                     </StackLayout>
 
-                    <!-- NavBar -->
                     <NavBar row="3" @menuTap="openDrawer" />
                 </GridLayout>
             </StackLayout>
@@ -81,7 +62,9 @@
     </Page>
 </template>
 
+
 <script>
+import { Http, ApplicationSettings } from '@nativescript/core';
 import Menu from './Menu.vue'
 import NavBar from './LogoBarre.vue'
 import Login from './Login'
@@ -91,8 +74,7 @@ import Profile from './Profile.vue'
 import AddLivraison from './AddLivraison.vue'
 import NousContacter from './NousContacter.vue'
 import Parametre from './Parametre.vue'
-import { Http } from '@nativescript/core'
-import { ApplicationSettings } from '@nativescript/core'
+import ConfirmationPage from './ConfirmationPage.vue'
 
 export default {
     name: 'Panier',
@@ -102,129 +84,246 @@ export default {
     },
     data() {
         return {
-            isDrawerOpen: false,
-            favoriteProducts: [] // Tableau des produits du panier récupérés depuis l'API
+            token: ApplicationSettings.getString("token"),
+            favoriteProducts: [
+                { productId: 22, originalPrice: "$20.00", image: "~/images/4.png", quantity: 1 },
+                { productId: 6298, originalPrice: "$20.00", image: "~/images/4.png", quantity: 1 },
+                { productId: 6320, originalPrice: "$20.00", image: "~/images/4.png", quantity: 1 },
+                { productId: 6351, originalPrice: "$20.00", image: "~/images/4.png", quantity: 1 },
+                { productId: 6671, originalPrice: "$20.00", image: "~/images/4.png", quantity: 1 },
+                { productId: 6675, originalPrice: "$20.00", image: "~/images/4.png", quantity: 1 },
+                { productId: 6680, originalPrice: "$20.00", image: "~/images/4.png", quantity: 1 },
+                { productId: 22, originalPrice: "$20.00", image: "~/images/4.png", quantity: 1 },
+                { productId: 6298, originalPrice: "$20.00", image: "~/images/7.png", quantity: 1 }
+            ],
+            deliveryFee: 0.00, // Initialiser les frais de livraison à 0
+            taxRate: 0.00 // Initialiser le taux de taxe à 0
         }
     },
-    mounted() {
-        this.getProductsInCart(); // Appel de l'API lors du montage du composant
+    created() {
+        // Appel des méthodes pour récupérer les frais et le taux de taxe lors de la création du composant
+        this.getDeliveryFee();
+        this.getTaxRate();
+    },
+    computed: {
+        subTotal() {
+            return this.favoriteProducts.reduce((total, product) => {
+                // Convertir la chaîne de caractères en nombre, enlever le symbole `$`
+                let price = parseFloat(product.originalPrice.replace('$', ''));
+                return total + (price * product.quantity);
+            }, 0);
+        },
+        taxAmount() {
+            // Calculer les frais de taxe à partir du taux de taxe
+            return this.subTotal * this.taxRate;
+        },
+        totalCost() {
+            // Calculer le coût total avec les frais de livraison et de taxe
+            return this.subTotal + this.taxAmount + this.deliveryFee;
+        }
     },
     methods: {
-        // Ouvrir le menu
+        async getDeliveryFee() {
+            try {
+                const response = await fetch('http://10.0.2.2:3000/Orders/frais-livraison', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ` + this.token,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la récupération des frais de livraison');
+                }
+
+                const data = await response.json();
+                console.log("Données récupérées pour les frais de livraison:", data);
+                console.log("Frais de livraison:", data.frais_livraison); // Changer deliveryFee en frais_livraison
+
+                // Assurez-vous que frais_livraison est un nombre
+                this.deliveryFee = parseFloat(data.frais_livraison) || 0; // Valeur par défaut 0 si conversion échoue
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Erreur lors de la récupération des frais de livraison');
+            }
+        },
+
+
+        async getTaxRate() {
+            try {
+                const response = await fetch('http://10.0.2.2:3000/Orders/frais-taxe', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ` + this.token,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la récupération du taux de taxe');
+                }
+
+                const data = await response.json();
+                console.log("Taux de taxe récupéré:", data);
+                // Assurez que taxRate est un nombre
+                this.taxRate = parseFloat(data.frais_taxe) || 0; // Valeur par défaut 0 si conversion échoue
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Erreur lors de la récupération du taux de taxe');
+            }
+        },
+    async passerCommande() {
+      try {
+        // Appel à l'API pour récupérer les informations utilisateur
+
+        const responseUserInfo = await fetch('http://10.0.2.2:3000/Clients/commande/informations', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ` + this.token, // Ajouter un token si nécessaire
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!responseUserInfo.ok) {
+          throw new Error('Erreur lors de la récupération des informations utilisateur');
+        }
+
+        const userInfo = await responseUserInfo.json();
+
+        // Préparer l'objet de commande avec les informations récupérées
+        const commande = {
+          items: this.favoriteProducts.map(product => ({
+            productId: product.productId,
+            quantity: product.quantity
+          })),
+          ville: userInfo.ville,
+          adresse: `${userInfo.numero_appartement} ${userInfo.rue}`,
+          codePostal: userInfo.code_postal,
+          telephone: userInfo.telephone
+        };
+        console.log(commande);
+        // Envoyer la commande à l'API
+        const responseCommande = await fetch('http://10.0.2.2:3000/Orders/place-order', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ` + this.token, // Ajouter un token si nécessaire
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(commande)
+        });
+
+        if (responseCommande.ok) {
+         // alert('Commande passée avec succès');
+           this.$navigateTo('wait');  // Rediriger vers wait.vue
+
+           // Attendre 2 secondes puis naviguer vers ConfirmationPage
+               setTimeout(() => {
+                 this.$navigateTo('ConfirmationPage');  // Redirection vers ConfirmationPage.vue
+                  }, 2000); // Délai de 2 secondes
+        } else {
+         // alert('Erreur lors de l\'envoi de la commande');
+         // Attendre 2 secondes puis naviguer vers ConfirmationPage
+                  setTimeout(() => {
+                   this.$navigateTo('CommandeEchouee');  // Redirection vers ConfirmationPage.vue
+                     }, 2000); // Délai de 2 secondes
+
+        }
+      } catch (error) {
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue : ' + error.message);
+      }
+    },
+
+
         openDrawer() {
             if (this.$refs.drawer && this.$refs.drawer.nativeView) {
                 this.$refs.drawer.nativeView.showDrawer();
             }
         },
-
-        // Récupérer les produits dans le panier via l'API
-        async getProductsInCart() {
-            try {
-                const response = await Http.request({
-                    url: 'http://10.0.2.2:3000/Clients/panier', // Remplacez par l'URL de votre API
-                    method: 'GET',
-                    headers: {
-                        "Authorization": `Bearer ${ApplicationSettings.getString('token')}`
-                    }
-                });
-                const products = response.content.toJSON();
-
-                if (Array.isArray(products) && products.length > 0) {
-                    // Remplir favoriteProducts avec les produits récupérés
-                    this.favoriteProducts = products.map(product => ({
-                        name: product.name,
-                        category: product.categories ? product.categories.split(',')[0] : 'Inconnue', // Prendre la première catégorie
-                        originalPrice: `$${product.price}`, // Format du prix
-                        image: product.image_url || "~/images/default.png" // Image du produit, avec une image par défaut si elle est absente
-                    }));
-                } else {
-                    console.log("Aucun produit trouvé dans le panier.");
-                }
-            } catch (error) {
-                console.error("Erreur lors de la récupération des produits du panier:", error);
-            }
-        },
-
-        // Gérer les éléments du menu
         onMenuTap(item) {
             console.log(`Menu item tapped: ${item}`);
             if (this.$refs.drawer && this.$refs.drawer.nativeView) {
                 this.$refs.drawer.nativeView.closeDrawer();
             }
-            // Navigation vers les pages
-            switch (item) {
-                case 'Panier':
-                    this.$navigateTo(Panier, {
-                        transition: { name: "fade" }
-                    }).then(() => {
-                        console.log("Navigation vers Panier réussie");
-                    }).catch(error => {
-                        console.error("Navigation vers Panier échouée:", error);
-                    });
-                    break;
-                case 'Mes commandes':
-                    this.$navigateTo(MesCommandes, {
-                        transition: { name: "fade" }
-                    }).then(() => {
-                         console.log("Navigation vers MesCommandes réussie");
-                    }).catch(error => {
-                        console.error("Navigation vers MesCommandes échouée:", error);
-                    });
-                    break;
-                case 'Mon profile':
-                    this.$navigateTo(Profile, {
-                        transition: { name: "fade" }
-                    }).then(() => {
-                        console.log("Navigation vers Profile réussie");
-                    }).catch(error => {
-                        console.error("Navigation vers Profile échouée:", error);
-                    });
-                    break;
-                case 'Adresse de livraison':
-                    this.$navigateTo(AddLivraison, {
-                        transition: { name: "fade" }
-                    }).then(() => {
-                        console.log("Navigation vers AddLivraison réussie");
-                    }).catch(error => {
-                        console.error("Navigation vers AddLivraison échouée:", error);
-                    });
-                    break;
-                case 'Nous contacter':
-                    this.$navigateTo(NousContacter, {
-                        transition: { name: "fade" }
-                    }).then(() => {
-                        console.log("Navigation vers NousContacter réussie");
-                    }).catch(error => {
-                        console.error("Navigation vers NousContacter échouée:", error);
-                    });
-                    break;
-                case 'Paramètres':
-                    this.$navigateTo(Parametre, {
-                        transition: { name: "fade" }
-                    }).then(() => {
-                        console.log("Navigation vers Parametre réussie");
-                    }).catch(error => {
-                        console.error("Navigation vers Parametre échouée:", error);
-                    });
-                    break;
-                case 'Se déconnecter':
-                    this.$navigateTo(Login, {
-                        transition: { name: "fade" }
-                    }).then(() => {
-                        console.log("Navigation vers Login réussie");
-                    }).catch(error => {
-                        console.error("Navigation vers Login échouée:", error);
-                    });
-                    break;
-            }
-        },
+            // Handle menu item navigation
+            switch(item) {
+                                    case 'Mes commandes':
+                                        this.$navigateTo(MesCommandes, {
+                                            transition: {
+                                                name: "fade"
+                                            }
+                                        }).then(() => {
+                                            console.log("Navigation to MesCommandes successful");
+                                        }).catch(error => {
+                                            console.error("Navigation to MesCommandes failed:", error);
+                                        });
+                                        break;
+                                    case 'Mon profile':
+                                        this.$navigateTo(Profile, {
+                                                  transition: {
+                                                     name: "fade"
+                                                   }
+                                        }).then(() => {
+                                                   console.log("Navigation to MesCommandes successful");
+                                        }).catch(error => {
+                                                  console.error("Navigation to MesCommandes failed:", error);
+                                        });
+                                        break;
+                                    case 'Adresse de livraison':
+                                         this.$navigateTo(AddLivraison, {
+                                              transition: {
+                                                name: "fade"
+                                               }
+                                         }).then(() => {
+                                                console.log("Navigation to MesCommandes successful");
+                                          }).catch(error => {
+                                                 console.error("Navigation to MesCommandes failed:", error);
+                                           });
+                                        break;
+                                    case 'Nous contacter':
+                                        this.$navigateTo(NousContacter, {
+                                               transition: {
+                                                  name: "fade"
+                                                }
 
-        // Lien de connexion
+                                                }).then(() => {
+                                                   console.log("Navigation to MesCommandes successful");
+                                                 }).catch(error => {
+                                                    console.error("Navigation to MesCommandes failed:", error);
+                                                 });
+                                        break;
+                                    case 'Paramètres':
+                                        this.$navigateTo(Parametre, {
+                                               transition: {
+                                                   name: "fade"
+                                                }
+
+                                        }).then(() => {
+                                                 console.log("Navigation to MesCommandes successful");
+                                        }).catch(error => {
+                                                  console.error("Navigation to MesCommandes failed:", error);
+                                        });
+
+                                        break;
+                                    case 'Se déconnecter':
+                                        this.$navigateTo(Login, {
+                                              transition: {
+                                                name: "fade"
+                                        }
+
+                                         }).then(() => {
+                                                console.log("Navigation to MesCommandes successful");
+                                         }).catch(error => {
+                                                 console.error("Navigation to MesCommandes failed:", error);
+                                         });
+
+                                        break;
+                        }
+        },
         loginlink() {
             this.$navigateTo(Login);
         },
-
-        // Retour en arrièrece
         goBack() {
             console.log("Go back tapped");
             const frame = Frame.topmost();
@@ -233,9 +332,30 @@ export default {
             } else {
                 console.log("No page to go back to");
             }
-        }
+        },
+        incrementQuantity(index) {
+                if (this.favoriteProducts[index].quantity !== undefined) {
+                    this.favoriteProducts[index].quantity++;
+                } else {
+                    // Si quantity n'est pas défini, on peut l'initialiser
+                    this.favoriteProducts[index].quantity = 1;
+                }
+            },
+            decrementQuantity(index) {
+                if (this.favoriteProducts[index].quantity > 1) {
+                    this.favoriteProducts[index].quantity--;
+                }
+            },
+
+            deleteProduct(index) {
+                    this.favoriteProducts.splice(index, 1); // Supprime l'article de la liste
+                }
+
     }
 }
+
+
+
 </script>
 
 <style scoped>
@@ -245,7 +365,7 @@ export default {
     object-fit: cover;
     border-radius: 20px;
     background-color: #ddd;
-    margin-left: 200;
+    margin-left: 11;
 }
 
 .qtt-image {
@@ -256,6 +376,15 @@ export default {
     background-color: #ddd;
     margin-left: 5;
 }
+.delete-icon {
+    width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 20px;
+        background-color: #ddd;
+        margin-left: 180;
+    cursor: pointer; /* Pour indiquer que l'icône est cliquable */
+}
 
 .input-field {
     font-size: 14px;
@@ -265,6 +394,7 @@ export default {
     margin-top: 5px;
     margin-left: 10px;
 }
+
 
 .action-bar {
     color: black;
