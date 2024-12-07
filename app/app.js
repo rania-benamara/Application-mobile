@@ -20,6 +20,10 @@ import AddLivraison from './components/AddLivraison';
 import AfficherDetails from './components/AfficherDetails';
 import CommanedPersonaliser from './components/CommanedPersonaliser';
 import CodeEnvoye from './components/CodeEnvoye';
+import CommandeEchouee from './components/CommandeEchouee';
+import wait from './components/wait';
+import ConfirmationPage from './components/ConfirmationPage';
+
 import RadSideDrawer from 'nativescript-ui-sidedrawer/vue'
 
 // Enable Vue logging
@@ -48,6 +52,9 @@ Vue.component('AddLivraison', AddLivraison);
 Vue.component('AfficherDetails', AfficherDetails);
 Vue.component('CommanedPersonaliser', CommanedPersonaliser);
 Vue.component('CodeEnvoye', CodeEnvoye);
+Vue.component('CommandeEchouee', CommandeEchouee);
+Vue.component('ConfirmationPage', ConfirmationPage);
+Vue.component('wait', wait);
 
 Vue.use(RadSideDrawer);
 

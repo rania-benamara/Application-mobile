@@ -41,7 +41,7 @@
 import { Http } from '@nativescript/core';
 import CodeEnvoye from './CodeEnvoye.vue';
 
-const API_URL = 'http://10.0.2.2:3000/Clients/forgot-password';
+const API_URL = 'https://dev-api.wnsansgluten.ca/Clients/forgot-password';
 
 export default {
     name: "ForgotPassword",
@@ -79,11 +79,11 @@ export default {
                 });
 
                 const result = response.content.toJSON();
-                
+
                 if (response.statusCode === 200) {
                     this.$navigateTo(CodeEnvoye, {
                         transition: { name: "slide" },
-                        props: { 
+                        props: {
                             email: this.email
                         }
                     });

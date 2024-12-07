@@ -71,7 +71,7 @@ import Login from './Login.vue';
 
 export default {
   name: 'CommanedPersonaliser',
-  
+
   data() {
     return {
       orderData: {
@@ -80,7 +80,7 @@ export default {
         description: ''
       },
       isLoading: false,
-      apiUrl: 'http://10.0.2.2:3000/Clients/personalized-order'
+      apiUrl: 'https://dev-api.wnsansgluten.ca/Clients/personalized-order'
     }
   },
 
@@ -115,7 +115,7 @@ export default {
     checkAuthentication() {
       const token = ApplicationSettings.getString('token', '');
       console.log('Checking authentication - Token:', token ? 'exists' : 'missing');
-      
+
       if (!token) {
         console.log('No token found during check');
         alert("Veuillez vous connecter");
@@ -167,7 +167,7 @@ export default {
         });
 
         console.log('Response status:', response.statusCode);
-        
+
         let responseData;
         try {
           responseData = response.content.toJSON();

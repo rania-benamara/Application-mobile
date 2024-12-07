@@ -127,7 +127,6 @@
  </RadSideDrawer>
  </Page>
 </template>
-
 <script>
 import { Http, ApplicationSettings } from '@nativescript/core';
 import { Frame, alert } from '@nativescript/core';
@@ -141,282 +140,289 @@ import NousContacter from './NousContacter.vue';
 import Parametre from './Parametre.vue';
 import Login from './Login.vue';
 
-const API_URL = 'http://10.0.2.2:3000/Product';
+const API_URL = 'https://dev-api.wnsansgluten.ca/Product';
 
 export default {
- name: 'CategoryProducts',
+  name: 'CategoryProducts',
 
- components: {
- Menu,
- NavBar
- },
+  components: {
+    Menu,
+    NavBar
+  },
 
- props: {
- categoryName: {
- type: String,
- required: true
- }
- },
+  props: {
+    categoryName: {
+      type: String,
+      required: true
+    }
+  },
 
- data() {
- return {
- products: [],
- cart: [],
- isLoading: false,
- errorMessage: '',
- defaultImage: "https://wnsansgluten.ca/wp-content/uploads/2023/07/placeholder.jpg",
- imageLoadErrors: new Set()
- }
- },
+  data() {
+    return {
+      products: [],
+      cart: [],
+      isLoading: false,
+      errorMessage: '',
+      defaultImage: "https://wnsansgluten.ca/wp-content/uploads/2023/07/placeholder.jpg",
+      imageLoadErrors: new Set()
+    };
+  },
 
- computed: {
- leftColumnProducts() {
- return this.products.filter((_, index) => index % 2 === 0);
- },
- rightColumnProducts() {
- return this.products.filter((_, index) => index % 2 === 1);
- }
- },
+  computed: {
+    leftColumnProducts() {
+      return this.products.filter((_, index) => index % 2 === 0);
+    },
+    rightColumnProducts() {
+      return this.products.filter((_, index) => index % 2 === 1);
+    }
+  },
 
- created() {
- this.fetchCategoryProducts();
- },
+  created() {
+    this.fetchCategoryProducts();
+  },
 
- methods: {
- async fetchCategoryProducts() {
- try {
- this.isLoading = true;
- this.errorMessage = '';
- console.log(`Fetching products for category: ${this.categoryName}`);
+  methods: {
+    async fetchCategoryProducts() {
+      try {
+        this.isLoading = true;
+        this.errorMessage = '';
+        console.log(`Fetching products for category: ${this.categoryName}`);
 
- const response = await Http.request({
- url: `${API_URL}/category`,
- method: "POST",
- headers: { "Content-Type": "application/json" },
- content: JSON.stringify({ categoryName: this.categoryName })
- });
+        const response = await Http.request({
+          url: `${API_URL}/category`,
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          content: JSON.stringify({ categoryName: this.categoryName })
+        });
 
- const results = response.content.toJSON();
- console.log('Number of products received:', results.length);
+        const results = response.content.toJSON();
+        console.log('Number of products received:', results.length);
 
- this.products = results.map(product => {
- let imageUrl = product.guid || product.image;
+        this.products = results.map(product => {
+          let imageUrl = product.guid || product.image;
 
- // Log the initial image URL for debugging
- console.log(`Initial image URL for ${product.name}:`, imageUrl);
+          // Log the initial image URL for debugging
+          console.log(`Initial image URL for ${product.name}:`, imageUrl);
 
- // Clean up the image URL
- if (imageUrl && typeof imageUrl === 'string') {
- // Remove any size suffixes and query parameters
- imageUrl = imageUrl.split('?')[0].replace(/-\d+x\d+\.(jpg|jpeg|png|gif)/, '.$1');
- console.log(`Cleaned image URL:`, imageUrl);
- } else {
- imageUrl = this.defaultImage;
- console.log(`Using default image for ${product.name}`);
- }
-
- return {
- id: product.id,
- name: product.name,
- category: this.getFirstCategory(product.categories),
- price: parseFloat(product.price || 0),
- rating: 4.5,
- image: imageUrl,
- isFavorite: false,
- description: product.description || "Aucune description disponible",
- quantity: 1
- };
- });
-
- console.log('Processed products:', this.products.length);
- } catch (error) {
- console.error('Error fetching category products:', error);
- this.errorMessage = "Erreur lors du chargement des produits";
- } finally {
- this.isLoading = false;
- }
- },
-
- getImageUrl(product) {
- if (!product.image || !this.isValidImageUrl(product.image)) {
- console.log(`Invalid image URL for ${product.name}, using default`);
- return this.defaultImage;
- }
- return product.image;
- },
-
- isValidImageUrl(url) {
- if (!url || typeof url !== 'string') return false;
- return url.match(/\.(jpg|jpeg|png|gif)$/i) !== null ||
- url.includes('/wp-content/uploads/');
- },
-
- getFirstCategory(categories) {
- if (!categories) return 'Sans catégorie';
- if (typeof categories === 'string') {
- const categoryArray = categories.split(',').map(cat => cat.trim());
- return categoryArray[0] || 'Sans catégorie';
- }
- if (Array.isArray(categories)) {
- return categories[0] || 'Sans catégorie';
- }
- return 'Sans catégorie';
- },
-
- getProductCategory(product) {
- return product.category || 'Sans catégorie';
- },
-
- onImageError(event, index) {
- console.log(`Image loading error for product ${index}`);
- console.log('Failed image URL:', this.products[index]?.image);
- if (this.products[index]) {
- this.products[index].image = this.defaultImage;
- this.imageLoadErrors.add(index);
- this.products = [...this.products];
- }
- },
-
- formatPrice(price) {
- return `${parseFloat(price).toFixed(2)}$`;
- },
-
- async addToCart(product) {
-          try {
-            const token = ApplicationSettings.getString('token');
-            if (!token) {
-              alert({
-                title: "Non authentifié",
-                message: "Veuillez vous connecter avant d'ajouter des produits au panier.",
-                okButtonText: "OK"
-              });
-              return;
-            }
-            const response = await Http.request({
-                url: 'http://10.0.2.2:3000/Clients/ajouter-au-panier',
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                content: JSON.stringify({
-                    product_id: product.id,
-                    quantity: 1
-                })
-            });
-            let result;
-            try {
-                result = response.content.toJSON();
-            } catch (parseError) {
-                console.error('Response parsing error:', parseError);
-                throw new Error('Réponse du serveur non valide.');
-            }
-            console.log("Parsed result:", result); // Ajoutez ce log avant le if pour vérifier le contenu de result
-            if (result && result.success) {
-                alert({
-                    title: "Succès",
-                    message: `${product.name} ajouté au panier`,
-                    okButtonText: "OK"
-                });
-            } else {
-                throw new Error(result?.message || 'Erreur lors de l\'ajout au panier');
-            }
-          } catch (error) {
-            alert({ title: "Succès", message: error.message || "Une erreur inattendue s'est produite", okButtonText: "OK"
-            });
+          // Clean up the image URL
+          if (imageUrl && typeof imageUrl === 'string') {
+            // Remove any size suffixes and query parameters
+            imageUrl = imageUrl.split('?')[0].replace(/-\d+x\d+\.(jpg|jpeg|png|gif)/, '.$1');
+            console.log(`Cleaned image URL:`, imageUrl);
+          } else {
+            imageUrl = this.defaultImage;
+            console.log(`Using default image for ${product.name}`);
           }
+
+          return {
+            id: product.id,
+            name: product.name,
+            category: this.getFirstCategory(product.categories),
+            price: parseFloat(product.price || 0),
+            rating: 4.5,
+            image: imageUrl,
+            isFavorite: false,
+            description: product.description || "Aucune description disponible",
+            quantity: 1
+          };
+        });
+
+        console.log('Processed products:', this.products.length);
+      } catch (error) {
+        console.error('Error fetching category products:', error);
+        this.errorMessage = "Erreur lors du chargement des produits";
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    getImageUrl(product) {
+      if (!product.image || !this.isValidImageUrl(product.image)) {
+        console.log(`Invalid image URL for ${product.name}, using default`);
+        return this.defaultImage;
+      }
+      return product.image;
+    },
+
+    isValidImageUrl(url) {
+      if (!url || typeof url !== 'string') return false;
+      return url.match(/\.(jpg|jpeg|png|gif)$/i) !== null || url.includes('/wp-content/uploads/');
+    },
+
+    getFirstCategory(categories) {
+      if (!categories) return 'Sans catégorie';
+      if (typeof categories === 'string') {
+        const categoryArray = categories.split(',').map(cat => cat.trim());
+        return categoryArray[0] || 'Sans catégorie';
+      }
+      if (Array.isArray(categories)) {
+        return categories[0] || 'Sans catégorie';
+      }
+      return 'Sans catégorie';
+    },
+
+    getProductCategory(product) {
+      return product.category || 'Sans catégorie';
+    },
+
+    onImageError(event, index) {
+      console.log(`Image loading error for product ${index}`);
+      console.log('Failed image URL:', this.products[index]?.image);
+      if (this.products[index]) {
+        this.products[index].image = this.defaultImage;
+        this.imageLoadErrors.add(index);
+        this.products = [...this.products]; // Force update
+      }
+    },
+
+    formatPrice(price) {
+      return `${parseFloat(price).toFixed(2)}$`;
+    },
+
+    async addToCart(product) {
+      try {
+        const token = ApplicationSettings.getString('token');
+        if (!token) {
+          alert({
+            title: "Non authentifié",
+            message: "Veuillez vous connecter avant d'ajouter des produits au panier.",
+            okButtonText: "OK"
+          });
+          return;
+        }
+        const response = await Http.request({
+          url: 'https://dev-api.wnsansgluten.ca/Clients/ajouter-au-panier',
+          method: 'POST',
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          content: JSON.stringify({
+            product_id: product.id,
+            quantity: 1
+          })
+        });
+        let result;
+        try {
+          result = response.content.toJSON();
+        } catch (parseError) {
+          console.error('Response parsing error:', parseError);
+          throw new Error('Réponse du serveur non valide.');
+        }
+        console.log("Parsed result:", result);
+        if (result && result.success) {
+          alert({
+            title: "Succès",
+            message: `${product.name} ajouté au panier`,
+            okButtonText: "OK"
+          });
+        } else {
+          throw new Error(result?.message || 'Erreur lors de l\'ajout au panier');
+        }
+      } catch (error) {
+        alert({
+          title: "Erreur",
+          message: error.message || "Une erreur inattendue s'est produite",
+          okButtonText: "OK"
+        });
+      }
+    },
+
+    showProductDetails(product) {
+      this.$navigateTo(AfficherDetails, {
+        props: {
+          product,
+          productId: product.id,
+          productName: product.name,
+          productDescription: product.description,
+          productImage: this.getImageUrl(product),
+          productPrice: product.price
         },
+        transition: { name: "fade" }
+      });
+    },
 
- showProductDetails(product) {
- this.$navigateTo(AfficherDetails, {
- props: {
- productId: product.id,
- productName: product.name,
- productDescription: product.description,
- productImage: this.getImageUrl(product),
- productPrice: product.price
- },
- transition: { name: "fade" }
- });
- },
+    async toggleFavorite(product, index) {
+      try {
+        const isFavorite = !this.products[index].isFavorite;
+        this.products[index].isFavorite = isFavorite;
 
- async toggleFavorite(product, index) {
- try {
- const isFavorite = !this.products[index].isFavorite;
- this.products[index].isFavorite = isFavorite;
+        const response = await Http.request({
+          url: `https://dev-api.wnsansgluten.ca/add-favoris`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${ApplicationSettings.getString('token')}`
+          },
+          content: JSON.stringify({
+            product_id: product.id,
+            is_favorite: isFavorite
+          })
+        });
 
- const response = await Http.request({
- url: `http://10.0.2.2:3000/add-favoris`,
- method: "POST",
- headers: {
- "Content-Type": "application/json",
- "Authorization": `Bearer ${this.$store.state.token}`
- },
- content: JSON.stringify({ productId: product.id })
- });
+        let result;
+        try {
+          result = response.content.toJSON();
+        } catch (parseError) {
+          console.error('Response parsing error:', parseError);
+          throw new Error('Réponse du serveur non valide.');
+        }
 
- const result = response.content.toJSON();
- console.log(result.message);
+        if (result && result.success) {
+          alert({
+            title: "Succès",
+            message: isFavorite ? 'Ajouté aux favoris' : 'Retiré des favoris',
+            okButtonText: "OK"
+          });
+        } else {
+          throw new Error(result?.message || 'Erreur lors de l\'ajout aux favoris');
+        }
+      } catch (error) {
+        alert({
+          title: "Erreur",
+          message: error.message || "Une erreur inattendue s'est produite",
+          okButtonText: "OK"
+        });
+      }
+    },
 
- if (isFavorite) {
- alert({
- title: "Succès",
- message: `${product.name} ajouté aux favoris`,
- okButtonText: "OK"
- });
- } else {
- alert({
- title: "Succès",
- message: `${product.name} retiré des favoris`,
- okButtonText: "OK"
- });
- }
- } catch (error) {
- console.error('Error toggling favorite:', error);
- alert({
- title: "Erreur",
- message: "Erreur lors de la mise à jour des favoris",
- okButtonText: "OK"
- });
- }
- },
+    openDrawer() {
+      if (this.$refs.drawer?.nativeView) {
+        this.$refs.drawer.nativeView.showDrawer();
+      }
+    },
 
- openDrawer() {
- if (this.$refs.drawer?.nativeView) {
- this.$refs.drawer.nativeView.showDrawer();
- }
- },
+    onMenuTap(item) {
+      if (this.$refs.drawer?.nativeView) {
+        this.$refs.drawer.nativeView.closeDrawer();
+      }
 
- onMenuTap(item) {
- if (this.$refs.drawer?.nativeView) {
- this.$refs.drawer.nativeView.closeDrawer();
- }
+      const routes = {
+        'Mes commandes': () => import('./MesCommandes.vue'),
+        'Mon profile': () => import('./Profile.vue'),
+        'Adresse de livraison': () => import('./AddLivraison.vue'),
+        'Nous contacter': () => import('./NousContacter.vue'),
+        'Paramètres': () => import('./Parametre.vue'),
+        'Se déconnecter': () => import('./Login.vue')
+      };
 
- const routes = {
- 'Mes commandes': MesCommandes,
- 'Mon profile': Profile,
- 'Adresse de livraison': AddLivraison,
- 'Nous contacter': NousContacter,
- 'Paramètres': Parametre,
- 'Se déconnecter': Login
- };
+      if (routes[item]) {
+        routes[item]()
+          .then(module => this.$navigateTo(module.default, {
+            transition: { name: "fade" }
+          }))
+          .catch(error => console.error('Navigation error:', error));
+      }
+    },
 
- const component = routes[item];
- if (component) {
- this.$navigateTo(component, {
- transition: { name: "fade" }
- })
- .catch(error => console.error('Navigation error:', error));
- }
- },
-
- goBack() {
- const frame = Frame.topmost();
- if (frame.canGoBack()) frame.goBack();
- }
- }
-}
+    goBack() {
+      const frame = Frame.topmost();
+      if (frame.canGoBack()) frame.goBack();
+    }
+  }
+};
 </script>
+
 
 <style scoped>
 .action-bar-layout {

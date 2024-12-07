@@ -110,7 +110,7 @@ const addressPattern = /^\d+\s+[a-zA-Z\s]+(?:\s+app\d+)?\s+[A-Za-z]\d[A-Za-z]\s?
         };
 
         // Effectuer la requête PUT pour mettre à jour le profil
-        const response = await fetch("http://10.0.2.2:3000/Clients/profile", {
+        const response = await fetch("https://dev-api.wnsansgluten.ca/Clients/profile", {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -159,7 +159,7 @@ const addressPattern = /^\d+\s+[a-zA-Z\s]+(?:\s+app\d+)?\s+[A-Za-z]\d[A-Za-z]\s?
         console.log("Token utilisé :", token);
 
         // Effectuer la requête GET pour récupérer le profil
-        const response = await fetch("http://10.0.2.2:3000/Clients/profile", {
+        const response = await fetch("https://dev-api.wnsansgluten.ca/Clients/profile", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`, // Utilisation du token dans les en-têtes

@@ -13,7 +13,7 @@
                     <Label text="Entrer votre nouveau mot de passe"
                            textWrap="true"
                            class="subtitle" />
-                    
+
                     <!-- Error Message -->
                     <Label v-if="errorMessage"
                            :text="errorMessage"
@@ -73,7 +73,7 @@ import { Http } from '@nativescript/core';
 import Login from './Login.vue';  // Assurez-vous que Login.vue est bien référencé.
 //url
 
-const API_URL = 'http://10.0.2.2:3000/Clients/reset-password';
+const API_URL = 'https://dev-api.wnsansgluten.ca/Clients/reset-password';
 
 export default {
     name: "ResetPassword",
@@ -97,25 +97,25 @@ export default {
         async onSubmit() {
             try {
                 this.errorMessage = '';
-                
+
                 // Validation
                 if (!this.newPassword || !this.confirmPassword) {
                     this.errorMessage = "Veuillez remplir tous les champs";
                     return;
                 }
-                
+
                 if (this.newPassword !== this.confirmPassword) {
                     this.errorMessage = "Les mots de passe ne correspondent pas";
                     return;
                 }
-                
+
                 if (this.newPassword.length < 4) {
                     this.errorMessage = "Le mot de passe doit contenir au moins 4 caractères";
                     return;
                 }
 
                 this.isLoading = true;
-                
+
                 const response = await Http.request({
                     url: API_URL,
                     method: "PUT",
@@ -128,7 +128,7 @@ export default {
                 });
 
                 const result = response.content.toJSON();
-                
+
                 if (response.statusCode === 200) {
                     alert({
                         title: "Succès",
@@ -150,15 +150,15 @@ export default {
                 this.isLoading = false;
             }
         },
-        
+
         toggleNewPasswordVisibility() {
             this.showNewPassword = !this.showNewPassword;
         },
-        
+
         toggleConfirmPasswordVisibility() {
             this.showConfirmPassword = !this.showConfirmPassword;
         },
-        
+
         goBack() {
             this.$navigateBack();
         }

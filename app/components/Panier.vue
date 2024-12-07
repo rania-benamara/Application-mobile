@@ -1,79 +1,83 @@
+https://dev-api.wnsansgluten.ca/Clients/panier
 <template>
     <Page actionBarHidden="true">
         <RadSideDrawer ref="drawer" drawerLocation="Right">
+            <!-- Contenu du menu -->
             <GridLayout ~drawerContent>
-                <Menu @menuTap="onMenuTap"/>
+                <Menu @menuTap="onMenuTap" />
             </GridLayout>
 
+            <!-- Contenu principal -->
             <StackLayout ~mainContent>
                 <GridLayout rows="auto, *, auto, auto">
-                    <!-- Header -->
+                    <!-- En-tÃªte -->
                     <ActionBar row="0" title="Mon Panier" class="action-bar">
                         <NavigationButton icon="~/images/img.png" @tap="goBack" ios.position="left" class="back-image" />
                     </ActionBar>
 
-                    <!-- Scrollable Products List -->
+                    <!-- Liste des produits scrollable -->
                     <ScrollView row="1">
                         <StackLayout class="offers-content">
-                            <StackLayout v-for="(product, index) in favoriteProducts"
+                            <StackLayout
+                                v-for="(product, index) in favoriteProducts"
                                 :key="index"
-                                class="product-list">
+                                class="product-list"
+                            >
                                 <GridLayout columns="auto, *" rows="auto, auto, auto" class="product-item">
                                     <Image :src="product.image" class="product-image" col="0" rowSpan="3" />
                                     <Label :text="product.name" class="product-name" col="1" row="0" />
                                     <Label :text="product.category" class="product-category" col="1" row="1" />
                                     <Label :text="product.originalPrice" class="original-price" col="1" row="2" />
                                     <StackLayout class="offer-subtitle" col="1" row="2" orientation="horizontal">
-                                        <Image src="~/images/img_1.png" class="qt-image" />
-                                        <TextField class="input-field" />
-                                        <Image src="~/images/img_2.png" class="qtt-image" />
+                                        <Image
+                                            src="~/images/delete.png"
+                                            class="delete-icon"
+                                            @tap="deleteProduct(index)"
+                                        />
+                                        <Image src="~/images/img_1.png" class="qt-image" @tap="decreaseQuantity(index)" />
+                                        <TextField class="input-field" :text="product.quantity || 1" />
+                                        <Image src="~/images/img_2.png" class="qtt-image" @tap="increaseQuantity(index)" />
                                     </StackLayout>
                                 </GridLayout>
                             </StackLayout>
                         </StackLayout>
                     </ScrollView>
 
-                    <!-- Fixed Summary Section -->
+                    <!-- Section rÃ©sumÃ© -->
                     <StackLayout row="2" class="summary-section">
                         <!-- Champ commentaire avec bouton -->
                         <GridLayout columns="*, auto" class="comment-generale">
                             <StackLayout class="comment-section" col="0">
-                                <TextField hint=" Laisser un commentaire" class="comment" />
+                            <TextField v-model="commentaire" hint=" Laisser un commentaire" class="comment" />
                             </StackLayout>
-                            <StackLayout class="bouton-section" col="1">
-                                <Button text="Envoyer" class="bouton" />
-                            </StackLayout>
+
                         </GridLayout>
 
-                        <!-- Sous-total, Frais de livraison, Frais de taxe, Coût total -->
+                        <!-- RÃ©sumÃ© des coÃ»ts -->
                         <GridLayout columns="*, auto" class="summary-item">
                             <Label text="Sous-total" class="summary-label" />
-                            <Label text="$92.00" class="summary-value" />
+                            <Label :text="totalPrice" class="summary-value" />
                         </GridLayout>
                         <GridLayout columns="*, auto" class="summary-item">
                             <Label text="Frais de livraison" class="summary-label" />
-                            <Label text="$0.00" class="summary-value" />
+                             <Label :text="`$${deliveryFee.toFixed(2)}`" class="summary-value" />
                         </GridLayout>
                         <GridLayout columns="*, auto" class="summary-item">
-                            <Label text="Coût des taxes" class="summary-label" />
-                            <Label text="$92.00" class="summary-value" />
+                            <Label text="CoÃ»t des taxes" class="summary-label" />
+                            <Label :text="taxes" class="summary-value" />
                         </GridLayout>
-
-                        <!-- Ligne en pointillés -->
                         <GridLayout columns="*" class="dotted-line">
                             <Label text="------------------------" class="dotted-line-label" />
                         </GridLayout>
-
                         <GridLayout columns="*, auto" class="summary-item">
-                            <Label text="Coût total" class="summary-label" />
-                            <Label text="$92.00" class="summary-value" />
+                            <Label text="CoÃ»t total" class="summary-label" />
+                            <Label :text="totalCost" class="summary-value" />
                         </GridLayout>
+                        <Button text="Passer la commande" class="checkout-button" @tap="passerCommande" />
 
-                        <!-- Bouton Passer à la caisse -->
-                        <Button text="Passer à la caisse" class="checkout-button" />
                     </StackLayout>
 
-                    <!-- NavBar -->
+                    <!-- Barre de navigation -->
                     <NavBar row="3" @menuTap="openDrawer" />
                 </GridLayout>
             </StackLayout>
@@ -82,17 +86,10 @@
 </template>
 
 <script>
-import Menu from './Menu.vue'
-import NavBar from './LogoBarre.vue'
-import Login from './Login'
-import { Frame } from '@nativescript/core'
-import MesCommandes from './MesCommandes.vue'
-import Profile from './Profile.vue'
-import AddLivraison from './AddLivraison.vue'
-import NousContacter from './NousContacter.vue'
-import Parametre from './Parametre.vue'
-import { Http } from '@nativescript/core'
-import { ApplicationSettings } from '@nativescript/core'
+import Menu from './Menu.vue';
+import NavBar from './LogoBarre.vue';
+import { Http } from '@nativescript/core';
+import { ApplicationSettings } from '@nativescript/core';
 
 export default {
     name: 'Panier',
@@ -102,140 +99,258 @@ export default {
     },
     data() {
         return {
+            token: ApplicationSettings.getString("token"),
             isDrawerOpen: false,
-            favoriteProducts: [] // Tableau des produits du panier récupérés depuis l'API
+            favoriteProducts: [], // Liste des produits du panier
+            deliveryFee: 0.00,
+            taxRate: 0.00 ,
+            commentaire: ''
+        };
+    },
+    computed: {
+        // Calcul dynamique du sous-total
+        totalPrice() {
+            return parseFloat(this.favoriteProducts.reduce((total, product) => {
+                return total + (parseFloat(product.originalPrice.replace('$', '')) * product.quantity);
+            }, 0).toFixed(2));
+        },
+        // Calcul de la taxe (en utilisant le taux de taxe)
+        taxes() {
+            return (this.totalPrice * this.taxRate).toFixed(2);
+        },
+        // Calcul du coÃ»t total
+        totalCost() {
+            // Le coÃ»t total inclut le sous-total, les taxes et les frais de livraison
+            return (this.totalPrice + parseFloat(this.taxes) + this.deliveryFee).toFixed(2);
         }
     },
     mounted() {
-        this.getProductsInCart(); // Appel de l'API lors du montage du composant
+        this.getProductsInCart();
+        this.getDeliveryFee();  // RÃ©cupÃ©rer les frais de livraison
+        this.getTaxRate();  // RÃ©cupÃ©rer le taux de taxe
     },
     methods: {
-        // Ouvrir le menu
         openDrawer() {
             if (this.$refs.drawer && this.$refs.drawer.nativeView) {
                 this.$refs.drawer.nativeView.showDrawer();
             }
         },
-
-        // Récupérer les produits dans le panier via l'API
+        // GÃ©rer l'augmentation et la diminution des quantitÃ©s
+        increaseQuantity(index) {
+            const product = this.favoriteProducts[index];
+            product.quantity = (product.quantity || 1) + 1;
+        },
+        decreaseQuantity(index) {
+            const product = this.favoriteProducts[index];
+            if (product.quantity > 1) {
+                product.quantity -= 1;
+            }
+        },
         async getProductsInCart() {
             try {
                 const response = await Http.request({
-                    url: 'http://10.0.2.2:3000/Clients/panier', // Remplacez par l'URL de votre API
+                    url: 'https://dev-api.wnsansgluten.ca/Clients/panier',
                     method: 'GET',
                     headers: {
-                        "Authorization": `Bearer ${ApplicationSettings.getString('token')}`
+                        Authorization: `Bearer ${ApplicationSettings.getString('token')}`
                     }
                 });
                 const products = response.content.toJSON();
 
-                if (Array.isArray(products) && products.length > 0) {
-                    // Remplir favoriteProducts avec les produits récupérés
+                // VÃ©rifier si `products` est un tableau
+                if (Array.isArray(products)) {
                     this.favoriteProducts = products.map(product => ({
+                        panierId: product.panier_id, // Utiliser id_panier pour identifier chaque produit dans la liste
+                        productId: product.id || product.productId,
                         name: product.name,
-                        category: product.categories ? product.categories.split(',')[0] : 'Inconnue', // Prendre la première catégorie
-                        originalPrice: `$${product.price}`, // Format du prix
-                        image: product.image_url || "~/images/default.png" // Image du produit, avec une image par défaut si elle est absente
+                        category: product.categories?.split(',')[0] || 'Inconnue',
+                        originalPrice: `$${product.price}`,
+                        image: product.image_url || '~/images/default.png',
+                        quantity: 1 // QuantitÃ© par dÃ©faut
                     }));
                 } else {
-                    console.log("Aucun produit trouvé dans le panier.");
+                    // Si ce n'est pas un tableau, vider le panier et loguer un message
+                    this.favoriteProducts = [];
+                    console.warn("Le panier est vide :", products.message || "Aucun produit trouvÃ© dans le panier.");
                 }
             } catch (error) {
-                console.error("Erreur lors de la récupération des produits du panier:", error);
+                console.error("Erreur lors de la rÃ©cupÃ©ration des produits :", error);
+            }
+        },
+         // Supprimer un produit de la liste et de la base de donnÃ©es
+          async deleteProduct(index) {
+            console.log(index);
+              const panierId = this.favoriteProducts[index].panierId; // RÃ©cupÃ©rer id_panier pour la suppression
+            console.log(panierId);
+              try {
+                  // Appel API pour supprimer le produit du panier
+                  const response = await Http.request({
+                      url: `https://dev-api.wnsansgluten.ca/Clients/panier/${panierId}`, // Passer id_panier dans l'URL
+                      method: 'DELETE',
+                      headers: {
+                          Authorization: `Bearer ${this.token}` // Assurez-vous d'envoyer le token pour authentifier l'utilisateur
+                      }
+                  });
+
+                  // Si la suppression est rÃ©ussie, supprimer le produit de la liste
+                  if (response.statusCode === 200) {
+                      this.favoriteProducts.splice(index, 1); // Supprime le produit de la liste
+                  }
+              } catch (error) {
+                  console.error("Erreur lors de la suppression du produit :", error);
+              }
+          },
+          // MÃ©thode pour vider le panier aprÃ¨s la commande
+              async viderPanier() {
+                  try {
+                      const response = await Http.request({
+                          url: 'https://dev-api.wnsansgluten.ca/Clients/panier',  // Utilisez la route qui supprime tous les produits
+                          method: 'DELETE',
+                          headers: {
+                              Authorization: `Bearer ${this.token}`,
+                              'Content-Type': 'application/json'
+                          }
+                      });
+
+                      if (response.statusCode === 200) {
+                          console.log("Panier vidÃ© avec succÃ¨s.");
+                          this.favoriteProducts = []; // Vide la liste des produits dans le frontend
+                      } else {
+                          console.error("Erreur lors de la suppression du panier:", response.content.toJSON());
+                      }
+                  } catch (error) {
+                      console.error("Erreur:", error);
+                  }
+              },
+        async getDeliveryFee() {
+            try {
+                const response = await Http.request({
+                    url: 'https://dev-api.wnsansgluten.ca/Orders/frais-livraison',
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${ApplicationSettings.getString('token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await response.content.toJSON();
+                this.deliveryFee = parseFloat(data.frais_livraison) || 0.00; // Mettre Ã  jour les frais de livraison
+            } catch (error) {
+                console.error("Erreur lors de la rÃ©cupÃ©ration des frais de livraison:", error);
+            }
+        },
+        async getTaxRate() {
+            try {
+                const response = await Http.request({
+                    url: 'https://dev-api.wnsansgluten.ca/Orders/frais-taxe',
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${ApplicationSettings.getString('token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await response.content.toJSON();
+                this.taxRate = parseFloat(data.frais_taxe) || 0.15; // Mettre Ã  jour le taux de taxe
+            } catch (error) {
+                console.error("Erreur lors de la rÃ©cupÃ©ration du taux de taxe:", error);
+            }
+        },
+        async passerCommande() {
+            try {
+                // VÃ©rifier si le panier est vide
+                if (this.favoriteProducts.length === 0) {
+                    alert('Votre panier est vide. Veuillez ajouter des produits avant de passer une commande.');
+                    return; // ArrÃªte l'exÃ©cution de la mÃ©thode
+                }
+
+                // Appel Ã  l'API pour rÃ©cupÃ©rer les informations utilisateur
+                const responseUserInfo = await fetch('https://dev-api.wnsansgluten.ca/Clients/commande/informations', {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${ApplicationSettings.getString('token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!responseUserInfo.ok) {
+                    throw new Error('Erreur lors de la rÃ©cupÃ©ration des informations utilisateur');
+                }
+
+                const userInfo = await responseUserInfo.json();
+
+                // PrÃ©parer l'objet de commande avec les informations rÃ©cupÃ©rÃ©es
+                const commande = {
+                    items: this.favoriteProducts.map(product => ({
+                        productId: product.productId,
+                        quantity: product.quantity
+                    })),
+                    ville: userInfo.ville,
+                    adresse: `${userInfo.numero_appartement} ${userInfo.rue}`,
+                    codePostal: userInfo.code_postal,
+                    telephone: userInfo.telephone,
+                    commentaire: this.commentaire || ''  // Ajout du commentaire
+                };
+
+                console.log(commande);  // VÃ©rifier la structure de la commande
+
+                // Envoyer la commande Ã  l'API
+                const responseCommande = await fetch('https://dev-api.wnsansgluten.ca/Orders/place-order', {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${ApplicationSettings.getString('token')}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(commande)
+                });
+
+                if (responseCommande.ok) {
+                    // Commande rÃ©ussie
+                     await this.viderPanier();  // Vider le panier aprÃ¨s une commande rÃ©ussie
+
+                    this.$navigateTo('wait');
+                    setTimeout(() => {
+                        this.$navigateTo('ConfirmationPage');
+                    }, 2000);
+                } else {
+                    // Commande Ã©chouÃ©e, loggez le message d'erreur
+                    const errorData = await responseCommande.json();  // RÃ©cupÃ©rer le message d'erreur du serveur
+                    console.error('Erreur lors de la commande:', errorData);
+                    alert('Erreur: ' + (errorData.error || 'Une erreur inconnue est survenue.'));
+
+                    setTimeout(() => {
+                        this.$navigateTo('CommandeEchouee');
+                    }, 2000);
+                }
+            } catch (error) {
+                console.error('Erreur:', error);
+                alert('Une erreur est survenue : ' + error.message);
             }
         },
 
-        // Gérer les éléments du menu
         onMenuTap(item) {
-            console.log(`Menu item tapped: ${item}`);
-            if (this.$refs.drawer && this.$refs.drawer.nativeView) {
-                this.$refs.drawer.nativeView.closeDrawer();
-            }
-            // Navigation vers les pages
-            switch (item) {
-                case 'Panier':
-                    this.$navigateTo(Panier, {
-                        transition: { name: "fade" }
-                    }).then(() => {
-                        console.log("Navigation vers Panier réussie");
-                    }).catch(error => {
-                        console.error("Navigation vers Panier échouée:", error);
-                    });
-                    break;
-                case 'Mes commandes':
-                    this.$navigateTo(MesCommandes, {
-                        transition: { name: "fade" }
-                    }).then(() => {
-                         console.log("Navigation vers MesCommandes réussie");
-                    }).catch(error => {
-                        console.error("Navigation vers MesCommandes échouée:", error);
-                    });
-                    break;
-                case 'Mon profile':
-                    this.$navigateTo(Profile, {
-                        transition: { name: "fade" }
-                    }).then(() => {
-                        console.log("Navigation vers Profile réussie");
-                    }).catch(error => {
-                        console.error("Navigation vers Profile échouée:", error);
-                    });
-                    break;
-                case 'Adresse de livraison':
-                    this.$navigateTo(AddLivraison, {
-                        transition: { name: "fade" }
-                    }).then(() => {
-                        console.log("Navigation vers AddLivraison réussie");
-                    }).catch(error => {
-                        console.error("Navigation vers AddLivraison échouée:", error);
-                    });
-                    break;
-                case 'Nous contacter':
-                    this.$navigateTo(NousContacter, {
-                        transition: { name: "fade" }
-                    }).then(() => {
-                        console.log("Navigation vers NousContacter réussie");
-                    }).catch(error => {
-                        console.error("Navigation vers NousContacter échouée:", error);
-                    });
-                    break;
-                case 'Paramètres':
-                    this.$navigateTo(Parametre, {
-                        transition: { name: "fade" }
-                    }).then(() => {
-                        console.log("Navigation vers Parametre réussie");
-                    }).catch(error => {
-                        console.error("Navigation vers Parametre échouée:", error);
-                    });
-                    break;
-                case 'Se déconnecter':
-                    this.$navigateTo(Login, {
-                        transition: { name: "fade" }
-                    }).then(() => {
-                        console.log("Navigation vers Login réussie");
-                    }).catch(error => {
-                        console.error("Navigation vers Login échouée:", error);
-                    });
-                    break;
+            const navigationMap = {
+                Panier: this.$navigateTo.bind(this, Panier),
+                'Mes commandes': this.$navigateTo.bind(this, MesCommandes),
+                'Mon profile': this.$navigateTo.bind(this, Profile),
+                'Adresse de livraison': this.$navigateTo.bind(this, AddLivraison),
+                'Nous contacter': this.$navigateTo.bind(this, NousContacter),
+                'ParamÃ¨tres': this.$navigateTo.bind(this, Parametre),
+                'Se dÃ©connecter': this.logout
+            };
+            if (navigationMap[item]) {
+                navigationMap[item]();
             }
         },
-
-        // Lien de connexion
-        loginlink() {
-            this.$navigateTo(Login);
-        },
-
-        // Retour en arrièrece
         goBack() {
-            console.log("Go back tapped");
-            const frame = Frame.topmost();
-            if (frame.canGoBack()) {
-                frame.goBack();
-            } else {
-                console.log("No page to go back to");
-            }
+            this.$navigateBack();
+        },
+        logout() {
+            ApplicationSettings.setString('token', ''); // Effacer le token de l'utilisateur
+            this.$navigateTo(Login); // Rediriger vers la page de login
         }
     }
-}
+};
+</script>
+
 </script>
 
 <style scoped>
@@ -245,7 +360,7 @@ export default {
     object-fit: cover;
     border-radius: 20px;
     background-color: #ddd;
-    margin-left: 200;
+    margin-left: 20;
 }
 
 .qtt-image {
@@ -300,6 +415,16 @@ export default {
     border-radius: 40px;
     margin-right: 18px;
 }
+.delete-icon {
+    width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 20px;
+        background-color: #ddd;
+        margin-left: 180;
+    cursor: pointer; /* Pour indiquer que l'icÃ´ne est cliquable */
+}
+
 
 .product-name {
     font-size: 18px;

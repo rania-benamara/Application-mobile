@@ -24,7 +24,7 @@ import Accueil from './Accueil.vue';
 import Register from './Register.vue';
 import ForgotPassword from './ForgotPassword.vue';
 
-const API_URL = 'http://10.0.2.2:3000/Clients';
+const API_URL = 'https://dev-api.wnsansgluten.ca/Clients';
 
 export default {
     data() {

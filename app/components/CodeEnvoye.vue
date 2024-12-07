@@ -25,7 +25,7 @@
 <script>
 import { Http, ApplicationSettings } from '@nativescript/core';
 import ResetPassword from './ResetPassword.vue'; // La page vers laquelle vous souhaitez rediriger
-const API_URL = 'http://10.0.2.2:3000/Clients/verify-code';
+const API_URL = 'https://dev-api.wnsansgluten.ca/Clients/verify-code';
 
 export default {
     data() {

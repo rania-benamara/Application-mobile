@@ -47,6 +47,8 @@
 </template>
 
 <script>
+import { Http,ApplicationSettings } from '@nativescript/core';
+
 import { Frame } from '@nativescript/core'
 import NavBar from './LogoBarre.vue'
 import Menu from './Menu.vue'
@@ -66,6 +68,11 @@ export default {
   },
 
   props: {
+    product:[],
+     product_id:{
+     type: Number,
+     required:true
+    },
     productName: {
       type: String,
       required: true
@@ -102,10 +109,51 @@ export default {
       }
     },
 
-    addToCart() {
-      // Code d'ajout au panier
-      console.log(`Adding ${this.quantity} of ${this.productName} to cart`);
-    },
+    async addToCart(product) {
+            try {
+              const token = ApplicationSettings.getString('token');
+              if (!token) {
+                alert({
+                  title: "Non authentifié",
+                  message: "Veuillez vous connecter avant d'ajouter des produits au panier.",
+                  okButtonText: "OK"
+                });
+                return;
+              }
+              const response = await Http.request({
+                  url: 'https://dev-api.wnsansgluten.ca/Clients/ajouter-au-panier',
+                  method: 'POST',
+                  headers: {
+                      "Content-Type": "application/json",
+                      "Authorization": `Bearer ${token}`
+                  },
+                  content: JSON.stringify({
+                      product_id: this.product.id,
+                      quantity: 1
+                  })
+              });
+              let result;
+              try {
+                  result = response.content.toJSON();
+              } catch (parseError) {
+                  console.error('Response parsing error:', parseError);
+                  throw new Error('Réponse du serveur non valide.');
+              }
+              console.log("Parsed result:", result); // Ajoutez ce log avant le if pour vérifier le contenu de result
+              if (result && result.success) {
+                  alert({
+                      title: "Succès",
+                      message: `${product.name} ajouté au panier`,
+                      okButtonText: "OK"
+                  });
+              } else {
+                  throw new Error(result?.message || 'Erreur lors de l\'ajout au panier');
+              }
+            } catch (error) {
+              alert({ title: "Succès", message: error.message || "Une erreur inattendue s'est produite", okButtonText: "OK"
+              });
+            }
+          },
 
     toggleFavorite() {
       this.isFavorite = !this.isFavorite;

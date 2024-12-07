@@ -130,7 +130,7 @@ import NavBar from './LogoBarre.vue';
 import AfficherDetails from './AfficherDetails.vue';
 
 
-const API_URL = 'http://10.0.2.2:3000/Product'
+const API_URL = 'https://dev-api.wnsansgluten.ca/Product'
 export default {
  name: 'AllProducts',
 
@@ -191,6 +191,7 @@ export default {
  }));
 
  console.log('Products processed:', this.products.length);
+
  } catch (error) {
  console.error('Error fetching products:', error);
  this.errorMessage = "Erreur lors du chargement des produits";
@@ -227,7 +228,7 @@ export default {
              return;
            }
            const response = await Http.request({
-               url: 'http://10.0.2.2:3000/Clients/ajouter-au-panier',
+               url: 'https://dev-api.wnsansgluten.ca/Clients/ajouter-au-panier',
                method: 'POST',
                headers: {
                    "Content-Type": "application/json",
@@ -263,12 +264,16 @@ export default {
    showProductDetails(product) {
    this.$navigateTo(AfficherDetails, {
    props: {
+   product,
    product_id: product.id,
    productName: product.name,
    productDescription: product.description,
    productImage: product.image,
    productPrice: product.price
+
    },
+
+
    transition: { name: "fade" }
    });
    },
@@ -304,28 +309,6 @@ export default {
     return `${parseFloat(price).toFixed(2)}$`;
     },
 
-    //async addToCart(product) {
-    //try {
-    //const existingProduct = this.cart.find(item => item.id === product.id);
-    //if (existingProduct) {
-    //existingProduct.quantity++;
-    //} else {
-   // this.cart.push({ ...product, quantity: 1 });
-   // }
-    //alert({
-   // title: "Succès",
-    //message: `${product.name} ajouté au panier`,
-    //okButtonText: "OK"
-    //});
-    //} catch (error) {
-    //console.error('Error adding to cart:', error);
-    //alert({
-    //title: "Erreur",
-    //message: "Erreur lors de l'ajout au panier",
-    //okButtonText: "OK"
-    //});
-    //}
-    //},
 
 
 
