@@ -1,197 +1,144 @@
 
 <template>
-  <Page actionBarHidden="true">
-    <StackLayout class="container">
-      <Label text="Créez un compte" class="title" />
-      <Label
-        text="Créez votre compte et commencez votre aventure pâtissière avec nous!"
-        class="description"
-        textWrap="true"
-      />
+ <Page actionBarHidden="true">
+ <StackLayout class="container">
+ <Label text="Créez un compte" class="title" />
+ <Label text="Créez votre compte et commencez votre aventure pâtissière avec nous!" class="description" textWrap="true" />
 
-      <!-- Text Fields -->
-      <StackLayout class="text-field-container">
-        <TextField
-          v-model="prenom"
-          hint="Prénom"
-          required="true"
-          class="input-field"
-        />
-      </StackLayout>
+ <!-- Text Fields -->
+ <StackLayout class="text-field-container">
+ <TextField v-model="prenom" hint="Prénom" required="true" class="input-field" />
+ </StackLayout>
 
-      <StackLayout class="text-field-container">
-        <TextField
-          v-model="nom"
-          hint="Nom"
-          required="true"
-          class="input-field"
-        />
-      </StackLayout>
+ <StackLayout class="text-field-container">
+ <TextField v-model="nom" hint="Nom" required="true" class="input-field" />
+ </StackLayout>
+ <StackLayout class="text-field-container">
+ <TextField v-model="telephone" hint="Téléphone" required="true" keyboardType="phone" class="input-field" />
+ </StackLayout>
+ <StackLayout class="text-field-container">
+ <TextField v-model="email" hint="Email" required="true" keyboardType="email" class="input-field" />
+ </StackLayout>
+ <StackLayout class="text-field-container">
+ <TextField v-model="password" hint="Mot de passe" required="true" secure="true" class="input-field" />
+ </StackLayout>
+ <StackLayout class="text-field-container">
+ <TextField v-model="date_naissance" hint="JJ / MM / AAAA" required="true" keyboardType="datetime" class="input-field" />
+ </StackLayout>
 
-      <StackLayout class="text-field-container">
-        <TextField
-          v-model="telephone"
-          hint="Téléphone"
-          required="true"
-          keyboardType="phone"
-          class="input-field"
-        />
-      </StackLayout>
+ <!-- Create Button -->
+ <Button text="Créer" class="create-button" @tap="registerUser" />
 
-      <StackLayout class="text-field-container">
-        <TextField
-          v-model="email"
-          hint="Email"
-          required="true"
-          keyboardType="email"
-          class="input-field"
-          :class="{ 'error-border': !isValidEmail }"
-          @blur="validateEmail"
-        />
-        <Label v-if="!isValidEmail" text="Email invalide" class="error-message" />
-      </StackLayout>
-
-      <StackLayout class="text-field-container">
-        <TextField
-          v-model="password"
-          hint="Mot de passe"
-          required="true"
-          secure="true"
-          class="input-field"
-        />
-      </StackLayout>
-
-      <StackLayout class="text-field-container">
-        <TextField
-          v-model="date_naissance"
-          hint="JJ / MM / AAAA"
-          required="true"
-          keyboardType="datetime"
-          class="input-field"
-        />
-      </StackLayout>
-
-      <!-- Create Button -->
-      <Button text="Créer" class="create-button" @tap="registerUser" />
-
-      <!-- Footer -->
-      <Label class="footer" text="Vous avez déjà un compte ? " />
-      <Label text="Connexion" class="footer-link" @tap="loginlink" />
-    </StackLayout>
-  </Page>
+ <!-- Footer -->
+ <Label class="footer" text="Vous avez déjà un compte ? " />
+ <Label text="Connexion" class="footer-link" @tap="loginlink" />
+ </StackLayout>
+ </Page>
 </template>
-
 <script>
-import Login from "./Login.vue";
-import { Http } from "@nativescript/core";
+import Login from './Login.vue';
+import { Buffer } from 'buffer';
+import { Http } from "@nativescript/core"; // Importer le module HTTP
 
 export default {
-  data() {
-    return {
-      prenom: "",
-      nom: "",
-      email: "",
-      telephone: "",
-      password: "",
-      date_naissance: "",
-      isValidEmail: true,
-    };
-  },
-  methods: {
-    validateEmail() {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      this.isValidEmail = emailRegex.test(this.email);
-    },
-    async registerUser() {
-      // Validation des champs requis
-      if (
-        !this.prenom ||
-        !this.nom ||
-        !this.telephone ||
-        !this.email ||
-        !this.password ||
-        !this.date_naissance
-      ) {
-        alert("Veuillez remplir tous les champs.");
-        return;
-      }
+ data() {
+ return {
+ prenom: '',
+ nom: '',
+ email: '',
+ telephone: '',
+ password: '',
+ date_naissance: '',
+ };
+ },
+ methods: {
+ async registerUser() {
+ if (!this.prenom || !this.nom || !this.telephone || !this.email || !this.password || !this.date_naissance) {
+ alert('Veuillez remplir tous les champs.');
+ return;
+ }
 
-      // Vérification des formats
-      const phoneRegex = /^\d{10,}$/;
-      const passwordRegex = /^(?=.*\d).{4,}$/;
-      const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+ if (!emailRegex.test(this.email)) {
+ alert("Veuillez entrer un email valide (ex : exemple@domaine.com).");
+ return;
+ }
 
-      if (!this.isValidEmail) {
-        alert("Veuillez entrer un email valide (ex : exemple@domaine.com).");
-        return;
-      }
-      if (!phoneRegex.test(this.telephone)) {
-        alert("Veuillez entrer un numéro de téléphone valide (au moins 10 chiffres).");
-        return;
-      }
-      if (!passwordRegex.test(this.password)) {
-        alert("Le mot de passe doit contenir au moins 4 caractères et au moins 1 chiffre.");
-        return;
-      }
-      if (!dateRegex.test(this.date_naissance)) {
-        alert("Veuillez entrer une date de naissance valide au format JJ/MM/AAAA.");
-        return;
-      }
+ const phoneRegex = /^\d{10,}$/;
+ if (!phoneRegex.test(this.telephone)) {
+ alert("Veuillez entrer un numéro de téléphone valide (au moins 10 chiffres).");
+ return;
+ }
 
-      // Préparation des données
-      const dataToSend = {
-        prenom: this.prenom,
-        nom: this.nom,
-        email: this.email,
-        telephone: this.telephone,
-        password: this.password,
-        date_naissance: this.date_naissance,
-      };
+ const passwordRegex = /^(?=.*\d).{4,}$/;
+ if (!passwordRegex.test(this.password)) {
+ alert("Le mot de passe doit contenir au moins 4 caractères et au moins 1 chiffre.");
+ return;
+ }
 
-      try {
-        const response = await Http.request({
-          url: "https://dev-api.wnsansgluten.ca/Clients/register",
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          content: JSON.stringify(dataToSend),
-        });
+ const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+ if (!dateRegex.test(this.date_naissance)) {
+ alert("Veuillez entrer une date de naissance valide au format JJ/MM/AAAA.");
+ return;
+ }
 
-        if (response.statusCode !== 200) {
-          alert(response.content.toString());
-          return;
-        }
+ const dataToSend = {
+ prenom: this.prenom,
+ nom: this.nom,
+ email: this.email,
+ telephone: this.telephone,
+ password: this.password,
+ date_naissance: this.date_naissance,
+ };
 
-        const data = response.content.toJSON();
-        const confirmed = confirm(data.message);
-        if (confirmed) {
-          // Effacer les champs
-          this.prenom = "";
-          this.nom = "";
-          this.email = "";
-          this.telephone = "";
-          this.password = "";
-          this.date_naissance = "";
+ try {
+ const response = await Http.request({
+ url: 'https://dev-api.wnsansgluten.ca/Clients/register',
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ content: JSON.stringify(dataToSend),
+ });
 
-          // Redirection
-          this.$navigateTo(Login, {
-            transition: { name: "slide", duration: 380, curve: "easeIn" },
-            clearHistory: true,
-          });
-        }
-      } catch (error) {
-        alert("Erreur lors de l'inscription : " + error.message);
-      }
-    },
-    loginlink() {
-      this.$navigateTo(Login, {
-        transition: { name: "slide", duration: 380, curve: "easeIn" },
-        clearHistory: true,
-      });
-    },
-  },
+ if (response.statusCode !== 200) {
+ alert(response.content.toString());
+ return;
+ }
+
+ const data = response.content.toJSON();
+
+ const confirmed = confirm(data.message);
+ console.log(confirmed);
+ if (confirmed == true) {
+ // Effacer les champs du formulaire
+ this.prenom = '';
+ this.nom = '';
+ this.email = '';
+ this.telephone = '';
+ this.password = '';
+ this.date_naissance = '';
+
+ // Redirection
+ this.$navigateTo(Login, {
+ transition: { name: "slide", duration: 380, curve: "easeIn" },
+ clearHistory: true,
+ });
+ }
+
+ } catch (error) {
+ alert('Erreur lors de l\'inscription: ' + error);
+ }
+ }
+,
+
+ loginlink() {
+ this.$navigateTo(Login, {
+ transition: { name: "slide", duration: 380, curve: "easeIn" },
+ clearHistory: true
+ });
+ }
+ }
 };
 </script>
-
 
 <style scoped>
 .container {
