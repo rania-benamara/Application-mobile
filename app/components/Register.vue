@@ -23,8 +23,11 @@
  <TextField v-model="password" hint="Mot de passe" required="true" secure="true" class="input-field" />
  </StackLayout>
  <StackLayout class="text-field-container">
- <TextField v-model="date_naissance" hint="JJ / MM / AAAA" required="true" keyboardType="datetime" class="input-field" />
- </StackLayout>
+ <DatePicker
+   maxDate="2024"
+    v-model="date_naissance"
+ />
+  </StackLayout>
 
  <!-- Create Button -->
  <Button text="Créer" class="create-button" @tap="registerUser" />
@@ -52,6 +55,9 @@ export default {
  };
  },
  methods: {
+ ddnChange () {
+
+ },
  async registerUser() {
  if (!this.prenom || !this.nom || !this.telephone || !this.email || !this.password || !this.date_naissance) {
  alert('Veuillez remplir tous les champs.');
@@ -76,11 +82,11 @@ export default {
  return;
  }
 
- const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
- if (!dateRegex.test(this.date_naissance)) {
- alert("Veuillez entrer une date de naissance valide au format JJ/MM/AAAA.");
- return;
- }
+ // const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+ // if (!dateRegex.test(this.date_naissance)) {
+ // alert("Veuillez entrer une date de naissance valide au format JJ/MM/AAAA.");
+ // return;
+ // }
 
  const dataToSend = {
  prenom: this.prenom,
@@ -88,7 +94,7 @@ export default {
  email: this.email,
  telephone: this.telephone,
  password: this.password,
- date_naissance: this.date_naissance,
+     date_naissance: this.date_naissance.getYear() + "-" + this.date_naissance.getMonth() + "-" + this.date_naissance.getDate()
  };
 
  try {
@@ -148,7 +154,7 @@ export default {
  background-color: #ffffff;
  text-align: center;
  font-family: 'Arial', sans-serif;
- width: 90%; /* Ensure container fits within the page */
+ width: 95%; /* Ensure container fits within the page */
  margin: 0 auto; /* Center the container */
 }
 
@@ -188,7 +194,7 @@ export default {
  font-size: 14px;
  font-weight: 400;
  line-height: 20.16px;
- width: 700px;
+ width: auto;
  max-width: 100%; /* Ensure it doesn't exceed the container width */
  margin-bottom: 30px;
 }
@@ -204,7 +210,7 @@ export default {
 }
 
 .create-button {
- width: 300; /* Ensure the button is wide enough */
+ width: auto; /* Ensure the button is wide enough */
  padding: 15; /* Increased padding */
  color: #ffffff;
  background-color: #1C1D53;
