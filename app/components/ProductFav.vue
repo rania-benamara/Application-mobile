@@ -2,9 +2,8 @@
   <Page actionBarHidden="true">
     <RadSideDrawer ref="drawer" drawerLocation="Right">
       <GridLayout ~drawerContent>
-        <Menu @menuTap="onMenuTap" />
+        <Menu @menuTap="onMenuTap"/>
       </GridLayout>
-
       <StackLayout ~mainContent>
         <GridLayout rows="auto, *, auto">
           <!-- Header -->
@@ -14,13 +13,24 @@
           </GridLayout>
 
           <!-- Loading Indicator -->
-          <ActivityIndicator v-if="isLoading" :busy="true" row="1" class="activity-indicator" />
+          <ActivityIndicator v-if="isLoading" busy="true" row="1" />
 
           <!-- Error Message -->
-          <Label v-if="errorMessage" :text="errorMessage" row="1" class="error-message" />
+          <Label v-else-if="errorMessage"
+                 :text="errorMessage"
+                 row="1"
+                 class="error-message"
+                 textWrap="true" />
+
+          <!-- Empty State -->
+          <StackLayout v-else-if="products.length === 0"
+                      row="1"
+                      class="empty-state">
+            <Label text="Aucun produit favori" class="empty-message" />
+          </StackLayout>
 
           <!-- Products List -->
-          <ScrollView row="1" v-if="!isLoading && !errorMessage">
+          <ScrollView v-else row="1">
             <StackLayout class="product-container">
               <GridLayout v-for="(product, index) in products"
                          :key="index"
@@ -29,35 +39,33 @@
                          class="product-item">
                 <!-- Product Image -->
                 <GridLayout col="0" @tap="showProductDetails(product)">
-                    <Image :src="product.image"
-                           stretch="aspectFill"
-                           class="product-image"/>
+                  <ActivityIndicator v-if="isImageLoading" busy="true" />
+                  <Image :src="getImageUrl(product)"
+                         stretch="aspectFill"
+                         class="product-image"
+                         @loaded="onImageLoaded"
+                         @error="onImageError"/>
                 </GridLayout>
 
                 <!-- Product Info -->
                 <StackLayout col="1" class="product-info">
-                    <!-- Info section -->
-                    <StackLayout @tap="showProductDetails(product)">
-                        <Label :text="product.name" class="product-name"/>
-                        <Label :text="product.category" class="product-category"/>
-                        <Label :text="formatPrice(product.price)" class="product-price"/>
-                    </StackLayout>
+                  <StackLayout @tap="showProductDetails(product)">
+                    <Label :text="product.name" class="product-name"/>
+                    <Label :text="product.category" class="product-category"/>
+                    <Label :text="formatPrice(product.price)" class="product-price"/>
+                  </StackLayout>
 
-                    <!-- Icons section -->
-                    <GridLayout columns="auto, auto, *" class="rating-container">
-                        <Image :src="product.isFavorite ? '~/images/favoriteIconFilled.png' : '~/images/favoriteIcon.png'"
-                               :class="{ 'favorite-icon-red': product.isFavorite }"
-                               col="0"
-                               class="favorite-icon"
-                               @tap="toggleFavorite(product, index)"/>
-                        <Image src="~/images/panier1.png"
-                               col="1"
-                               class="cart-icon"
-                               @tap="onCartIconTap(product)"/>
-                        <Label :text="product.rating.toFixed(1)"
-                               col="2"
-                               class="product-rating"/>
-                    </GridLayout>
+                  <GridLayout columns="auto, auto, *" class="rating-container">
+                    <Image src="~/images/favoris-rempli.png"
+                           col="0"
+                           class="favorite-icon"
+                           @tap="toggleFavorite(product, index)"/>
+                    <Image src="~/images/panier1.png"
+                           col="1"
+                           class="cart-icon"
+                           @tap="onCartIconTap(product)"/>
+                    <Label :text="product.rating" col="2" class="product-rating"/>
+                  </GridLayout>
                 </StackLayout>
               </GridLayout>
             </StackLayout>
@@ -72,42 +80,56 @@
 </template>
 
 <script>
-import Menu from './Menu.vue'
-import NavBar from './LogoBarre.vue'
-import MesCommandes from './MesCommandes.vue'
+import { Http, ApplicationSettings } from '@nativescript/core'
 import { Frame, alert } from '@nativescript/core'
-import Profile from './Profile.vue'
-import AddLivraison from './AddLivraison.vue'
-import NousContacter from './NousContacter.vue'
-import Parametre from './Parametre.vue'
-import Login from './Login.vue'
-import AfficherDetails from './AfficherDetails.vue'
-import axios from 'axios'
+import Menu from './Menu'
+import NavBar from './LogoBarre'
+import AfficherDetails from './AfficherDetails'
 
 export default {
   name: 'ProductFav',
 
   components: {
-    Menu: () => import('./Menu.vue'),
-    NavBar: () => import('./LogoBarre.vue')
+    Menu,
+    NavBar
   },
 
   data() {
     return {
       products: [],
-      cart: [],
       isLoading: false,
-      errorMessage: ''
+      isImageLoading: true,
+      errorMessage: '',
+      defaultImage: 'https://wnsansgluten.ca/wp-content/uploads/woocommerce-placeholder.png',
+      cart: []
     }
   },
 
   mounted() {
-    this.fetchFavoriteProducts();
+    this.fetchFavoriteProducts()
   },
 
   methods: {
     formatPrice(price) {
-      return `$${price.toFixed(2)}`;
+      return `$${parseFloat(price).toFixed(2)}`
+    },
+
+    getImageUrl(product) {
+      if (!product.image || product.image.includes('?post_type=product')) {
+        console.log(`Using default image for product: ${product.name}`);
+        return this.defaultImage;
+      }
+      console.log(`Using product image for product: ${product.name}, URL: ${product.image}`);
+      return product.image;
+    },
+
+    onImageLoaded() {
+      this.isImageLoading = false
+    },
+
+    onImageError(args) {
+      console.log("Image loading error:", args.object.src);
+      args.object.src = this.defaultImage;
     },
 
     showProductDetails(product) {
@@ -118,72 +140,64 @@ export default {
           productImage: product.image,
           productPrice: product.price
         },
-        transition: {
-          name: "fade"
-        }
+        transition: { name: "fade" }
       }).catch(error => {
-        console.error("Navigation to AfficherDetails failed:", error);
-      });
+        console.error("Navigation to AfficherDetails failed:", error)
+      })
     },
 
     onCartIconTap(product) {
-      const existingProduct = this.cart.find(item => item.name === product.name);
-
+      const existingProduct = this.cart.find(item => item.name === product.name)
       if (existingProduct) {
-        existingProduct.quantity += 1;
+        existingProduct.quantity += 1
       } else {
-        this.cart.push({
-          ...product,
-          quantity: 1
-        });
+        this.cart.push({ ...product, quantity: 1 })
       }
-
       alert({
         title: "Succès",
         message: `${product.name} a été ajouté au panier`,
         okButtonText: "OK"
-      });
-
-      console.log('Cart:', this.cart);
+      })
     },
 
     async toggleFavorite(product, index) {
-      try {
-        const isFavorite = !this.products[index].isFavorite;
-        this.products[index].isFavorite = isFavorite;
+        try {
+            const token = ApplicationSettings.getString('token');
 
-        const response = await axios.post('http://10.0.2.2:3000/add-favoris', {
-          productId: product.id
-        });
+            // Since this is the favorites page, we're only removing items
+            const response = await Http.request({
+                url: `https://dev-api.wnsansgluten.ca/Clients/remove-favoris/${product.id}`,
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
 
-        console.log(response.data.message);
+            const responseData = response.content.toJSON();
+            if (responseData.message === "Produit retiré des favoris avec succès") {
+                // Remove the product from the local array
+                this.products.splice(index, 1);
 
-        if (isFavorite) {
-          alert({
-            title: "Succès",
-            message: `${product.name} ajouté aux favoris`,
-            okButtonText: "OK"
-          });
-        } else {
-          alert({
-            title: "Succès",
-            message: `${product.name} retiré des favoris`,
-            okButtonText: "OK"
-          });
+                alert({
+                    title: "Succès",
+                    message: `${product.name} a été retiré des favoris`,
+                    okButtonText: "OK"
+                });
+            }
+        } catch (error) {
+            console.error('Error removing favorite product:', error);
+            alert({
+                title: "Erreur",
+                message: "Erreur lors de la suppression des favoris",
+                okButtonText: "OK"
+            });
         }
-      } catch (error) {
-        console.error('Error toggling favorite:', error);
-        alert({
-          title: "Erreur",
-          message: "Erreur lors de la mise à jour des favoris",
-          okButtonText: "OK"
-        });
-      }
     },
 
     openDrawer() {
       if (this.$refs.drawer && this.$refs.drawer.nativeView) {
-        this.$refs.drawer.nativeView.showDrawer();
+        this.$refs.drawer.nativeView.showDrawer()
       }
     },
 
@@ -193,28 +207,23 @@ export default {
       }
 
       const navigationMap = {
-        'Mes commandes': MesCommandes,
-        'Mon profile': Profile,
-        'Adresse de livraison': AddLivraison,
-        'Nous contacter': NousContacter,
-        'Paramètres': Parametre,
-        'Se déconnecter': Login
+        'Mes commandes': () => import('./MesCommandes'),
+        'Mon profile': () => import('./Profile'),
+        'Adresse de livraison': () => import('./AddLivraison'),
+        'Nous contacter': () => import('./NousContacter'),
+        'Paramètres': () => import('./Parametre'),
+        'Se déconnecter': () => import('./Login')
       };
 
-      const component = navigationMap[item];
-      if (component) {
-        this.$navigateTo(component, {
-          transition: { name: "fade" }
-        }).catch(error => {
-          console.error(`Navigation to ${item} failed:`, error);
+      const componentImport = navigationMap[item];
+      if (componentImport) {
+        componentImport().then(module => {
+          this.$navigateTo(module.default, {
+            transition: { name: "fade" }
+          }).catch(error => {
+            console.error(`Navigation to ${item} failed:`, error);
+          });
         });
-      }
-    },
-
-    goBack() {
-      const frame = Frame.topmost();
-      if (frame.canGoBack()) {
-        frame.goBack();
       }
     },
 
@@ -222,22 +231,44 @@ export default {
       try {
         this.isLoading = true;
         this.errorMessage = '';
-        const response = await axios.get('http://10.0.2.2:3000/favoris');
-        this.products = response.data.map(product => ({
-          ...product,
-          isFavorite: true, // Assuming all fetched products are favorites
-          price: parseFloat(product.price) // Ensure price is a number
-        }));
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          console.warn('No favorite products found.');
-          this.errorMessage = "Aucun produit favori trouvé.";
+
+        const token = ApplicationSettings.getString('token');
+        const response = await Http.request({
+          url: 'https://dev-api.wnsansgluten.ca/Clients/favoris',
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const responseData = response.content.toJSON();
+        if (Array.isArray(responseData)) {
+          this.products = responseData.map(product => ({
+            ...product,
+            isFavorite: true,
+            price: parseFloat(product.price || 0),
+            image: this.getImageUrl(product)
+          }));
+        } else if (responseData.message === "Unauthorized") {
+          throw new Error('Unauthorized');
         } else {
-          console.error('Error fetching favorite products:', error);
-          this.errorMessage = "Erreur lors de la récupération des produits favoris";
+          throw new Error('Unexpected response format');
         }
+      } catch (error) {
+        console.error('Error fetching favorite products:', error);
+        this.errorMessage = error.message === 'Unauthorized'
+          ? "Vous n'êtes pas autorisé à accéder à cette ressource."
+          : "Erreur lors de la récupération des produits favoris";
       } finally {
         this.isLoading = false;
+      }
+    },
+
+    goBack() {
+      const frame = Frame.topmost();
+      if (frame.canGoBack()) {
+        frame.goBack();
       }
     }
   }
@@ -285,6 +316,7 @@ export default {
   height: 100;
   border-radius: 10;
   margin: 5;
+  background-color: #f5f5f5;
 }
 
 .product-info {
@@ -323,10 +355,6 @@ export default {
   margin-right: 10;
 }
 
-.favorite-icon-red {
-  filter: invert(29%) sepia(96%) saturate(7485%) hue-rotate(357deg) brightness(100%) contrast(104%);
-}
-
 .cart-icon {
   width: 20;
   height: 20;
@@ -348,8 +376,19 @@ export default {
   margin: 20;
 }
 
-.activity-indicator {
-  color: #FF4A4C;
+.empty-state {
+  text-align: center;
   margin: 20;
+}
+
+.empty-message {
+  color: #666;
+  font-size: 16;
+}
+
+ActivityIndicator {
+  width: 20;
+  height: 20;
+  color: #FF4A4C;
 }
 </style>

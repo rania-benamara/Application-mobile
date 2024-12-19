@@ -166,7 +166,7 @@ import NavBar from './LogoBarre.vue';
 import AfficherDetails from './AfficherDetails.vue';
 
 // For Android emulator
-const API_URL = 'http://10.0.2.2:3000/Product';
+const API_URL = 'https://dev-api.wnsansgluten.ca/Product';
 // For iOS simulator
 // const API_URL = 'http://localhost:3000/Product';
 

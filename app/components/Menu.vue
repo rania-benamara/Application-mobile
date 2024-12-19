@@ -1,9 +1,7 @@
 <template>
     <StackLayout class="menu-container">
         <GridLayout rows="auto, auto" columns="auto, *" class="user-info">
-            <Image src="~/images/contactIcon.png" row="0" col="0" rowSpan="2" class="menu-icon-title"/>
-            <Label text="Tian Saris" row="0" col="1" class="title"/>
-            <Label text="Loremipsum@email.com" row="1" col="1" class="menu-item-email"/>
+
         </GridLayout>
         <ScrollView>
             <StackLayout class="menu-items">

@@ -156,7 +156,7 @@ import Menu from './Menu.vue';
 import NavBar from './LogoBarre.vue';
 import AfficherDetails from './AfficherDetails.vue';
 
-const API_URL = 'http://10.0.2.2:3000/Product';
+const API_URL = 'https://dev-api.wnsansgluten.ca/Product';
 
 export default {
   name: 'Search',

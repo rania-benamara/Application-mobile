@@ -33,7 +33,7 @@
 import Login from './Login'
 import { Http, ApplicationSettings } from '@nativescript/core';
 
-const API_URL = 'http://10.0.2.2:3000/Clients';
+const API_URL = 'https://dev-api.wnsansgluten.ca/Clients';
 
 export default {
     name: "SupprimerProfile",
