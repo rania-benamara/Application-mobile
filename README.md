@@ -61,8 +61,8 @@ The app is designed to enhance the client experience for a bakery by offering:
 ### 🔐 Login Screen
 ![Login Screen](https://i.postimg.cc/KjFWKK7p/Screenshot-2025-05-19-at-3-53-30-PM.png)
 
-### 📋 Menu View
-![Menu Screen](https://i.postimg.cc/52FmV4LX/Screenshot-2025-05-19-at-3-57-18-PM.png)
+### 📋 Home Screen
+![Home Screen](https://i.postimg.cc/kMKRNTKt/Screenshot-2025-05-19-at-4-05-50-PM.png)
 
 
 
