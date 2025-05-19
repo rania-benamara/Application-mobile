@@ -1,4 +1,4 @@
-# 🍰 Bakery Mobile App – Frontend (NativeScript + Vue.js)
+# 🍰 Wn Sans Gluten Mobile App – Frontend (NativeScript + Vue.js)
 
 This project is the **frontend mobile application** for a bakery, developed using **NativeScript** and **Vue.js**. It allows clients to browse the menu, create an account, and place orders easily from their mobile devices.
 
